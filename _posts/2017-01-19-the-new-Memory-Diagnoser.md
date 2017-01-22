@@ -4,6 +4,10 @@ title: The new MemoryDiagnoser is now better than ever!
 excerpt_separator: <!--more-->
 ---
 
+## Introduction
+
+BenchmarkDotNet is a powerful .NET library for benchmarking ([more about it](http://benchmarkdotnet.org/)). MemoryDiagnoser is one of its features that allows measuring the number of allocated bytes and garbage collection frequency.
+
 ## The Story
 
 Before the `0.10.1` version of BenchmarkDotNet the `MemoryDiagnoser` was part of `BenchmarkDotNet.Diagnostics.Windows` package. Internally it was using Event Tracing for Windows (ETW), which had following implications:
@@ -26,12 +30,12 @@ So at this point of time, I knew how to get an accurate number of allocated byte
 * Change the diagnoser flow to allow the diagnosers to attach or detach whenever they want (at the beginning, after setup or before cleanup) [#277](https://github.com/dotnet/BenchmarkDotNet/pull/277)
 *  **Eliminate ALL heap allocations** in the Engine (code that executes the benchmarks). This was fun! Also part of [#277](https://github.com/dotnet/BenchmarkDotNet/pull/277/commits)
 * Make the new `MemoryDiagnoser` built-in to gather the allocation statistics from within the process itself.  [#284](https://github.com/dotnet/BenchmarkDotNet/pull/284)
-* Use the two nice APIs and handle Mono nicely. Also part of [#284](https://github.com/dotnet/BenchmarkDotNet/pull/284)
 * Solve the scaling problem. Also part of [#284](https://github.com/dotnet/BenchmarkDotNet/pull/284)
+* Make sure that everything works fine for .NET Framework, .NET Core and Mono. Also part of [#284](https://github.com/dotnet/BenchmarkDotNet/pull/284)
 
 ## Can it be trusted now?
 
-Let's run following code and analyse the results.
+Let's create a new console app, install [BenchmarkDotNet 0.10.1](https://www.nuget.org/packages/BenchmarkDotNet/0.10.1), run following code and analyse the results.
 
 ```cs
 class Program
@@ -85,7 +89,7 @@ Let's analyse the results:
 {: .center}
 ![Memory Diagnoser - Profiler Verification](/images/memoryDiagnoser_profilerVerification.png)
 
-Visual Studio Memory Allocation Profiler shows `354 000 064` for `1 000 000` of invocations, which gives us 354 bytes in total. The difference is 2 bytes which are `0,5649718%` of the total. Not bad, but still not perfect. Let's say that the new MemoryDiagnoser is **99.5% accurate**. Matt Warren [says](https://github.com/dotnet/BenchmarkDotNet/pull/284#issuecomment-266724308) that most probably the [Allocation quantum](https://github.com/dotnet/coreclr/blob/master/Documentation/botr/garbage-collection.md#design-of-allocator) is the reason for that.
+Visual Studio Memory Allocation Profiler shows `354 000 064` for `1 000 000` of invocations, which gives us 354 bytes per invocation. The difference is 2 bytes which are `0,5649718%` of the total. Not bad, but still not perfect. Let's say that the new MemoryDiagnoser is **99.5% accurate**. Matt Warren [says](https://github.com/dotnet/BenchmarkDotNet/pull/284#issuecomment-266724308) that most probably the [Allocation quantum](https://github.com/dotnet/coreclr/blob/master/Documentation/botr/garbage-collection.md#design-of-allocator) is the reason for that.
 
 
 ## How to use it?
@@ -158,4 +162,4 @@ Assert.True(summary.Reports.All(report => report.GcStats.AllocatedBytes == 0));
 	- [Expose GC allocation statistics](https://github.com/dotnet/coreclr/issues/6275)
 	- [Provide API to understand how many allocations have happened](https://github.com/dotnet/corefx/issues/10157) 
 
-#### It's my first blog post ever! Feedback is very welcomed!
+#### It's my first blog post ever! Feedback is most welcome!
