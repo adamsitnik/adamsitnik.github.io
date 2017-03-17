@@ -8,7 +8,7 @@ excerpt_separator: <!--more-->
 
 It's been ten days since Visual Studio 2017 RTM was released. `.xproj` and `project.json` files are not going to be supported anymore so it's time to port our (ASP).NET Core projects to the new, simplified `.csproj` project file format. 
 
-This post is not a complete guide on porting. I want to show you what problems I have faced and how I had solved them. I hope that somebody will find this useful. The examples are based on a ASP.NET Core application for trading energy that I develop at work. So it's something real, not "Hello World". I have also [ported](https://github.com/dotnet/BenchmarkDotNet/pull/357) BenchmarkDotNet to the new .csproj file format so it's a mixture of my personal experience.
+This post is not a complete guide on porting. I want to show you what problems I have faced and how I had solved them. I hope that somebody will find this useful. The examples are based on an ASP.NET Core application for trading energy that I develop at work. So it's something real, not "Hello World". I have also [ported](https://github.com/dotnet/BenchmarkDotNet/pull/357) BenchmarkDotNet to the new .csproj file format so it's a mixture of my personal experience.
 
 <!--more-->
 
@@ -21,7 +21,7 @@ Nate McMaster, who is a developer on the ASP.NET team wrote two great blog posts
 
 ## Use the tool
 
-The first thing you need to do is to open your solution with new Visual Studio 2017 and approve the One-way upgrade. I recommend doing this from VS, not console (`dotnet migrate`). VS takes better care of all the MSBuild-related paths. So if your solution contains a lot of different projects (C#, F# and VB, .NET Core and classic .NET framework) you have higher chance for sucess. (BenchmarkDotNet contains all of them because we support all possible scenarios ;) )
+The first thing you need to do is to open your solution with new Visual Studio 2017 and approve the One-way upgrade. I recommend doing this from VS, not the console (`dotnet migrate`). VS takes better care of all the MSBuild-related paths. So if your solution contains a lot of different projects (C#, F#, VB, .NET Core and classic .NET framework) you have a higher chance of success. (BenchmarkDotNet contains all of them because we support all possible scenarios ;) )
 
 {: .center}
 ![Visual Studio 2017 - One way upgrade approval](/images/porting/openWithVs2017.png)
@@ -36,7 +36,7 @@ After it's finished a Migration Reports is opened in the web browser. **Make sur
 {: .center}
 ![Migration Report](/images/porting/migrationReport.png)
 
-You will notice that all `project.json` and `*.xproj` files are gone. Don't worry, they all have been saved in the `Backup` folder. Of course, the new `.csproj` files have been created. At this point of time you should commit all the changes. Later on you will see what was done by the tool, and what changes you have applied manually.
+You will notice that all `project.json` and `*.xproj` files are gone. Don't worry, they all have been saved in the `Backup` folder. Of course, the new `.csproj` files have been created. At this point of time, you should commit all the changes. Later on, you will see what was done by the tool, and what changes you have applied manually.
 
 {: .center}
 ![Changes](/images/porting/changes.png)
@@ -45,7 +45,7 @@ You will notice that all `project.json` and `*.xproj` files are gone. Don't worr
 
 Software engineers should have limited trust in tools they use. So now it's time to compare your old `project.json` files with the new `.csproj` files. If you have read the two recommended posts you should already know what the mappings should be. Look for the missing parts, the less common or more complicated feature, the higher the chances that something is wrong. Once you find a difference you need to do the "manual" porting ;) I recommend you to do a separate commit per every "fix" so your team members can understand what you did.
 
-For me the first thing I noticed was that paths to custom ruleset files for static code analysis were missing.
+For me, the first thing I noticed was that paths to custom ruleset files for static code analysis were missing.
 
 ```json
 "configurations": {
@@ -108,7 +108,7 @@ Please also keep in mind that Concurrent Server GC mode which is the default mod
 
 ## Build and Run
 
-Now it's the time to build and run your app. But before you do so I recommend you to cleanup your solution directory to make sure that you perform a "clean" build. What works best for me:
+Now it's the time to build and run your app. But before you do so I recommend you to clean up your solution directory to make sure that you perform a "clean" build. What works best for me:
 
 ``` cmd
 // commit your changes, close VS
@@ -178,7 +178,7 @@ If you want to use your build number that is passed by your CI to every process 
 <BuildNumber Condition=" '$(BuildNumber)' == '' ">0</BuildNumber> <!-- if not set -->
 ```
 
-then you can set whatever suits you best by using the combination of MSBuild properties, features, and variables. Sample:
+Then you can set whatever suits you best by using the combination of MSBuild properties, features, and variables. Sample:
 
 ```xml
 <AssemblyVersion>$(BuildNumber)</AssemblyVersion>
@@ -187,9 +187,9 @@ then you can set whatever suits you best by using the combination of MSBuild pro
 <PackageVersion>$(BuildNumber)</PackageVersion>
 ```
 
-To build a package you still need to call `dotnet publish`. However the way of handling relative path for `--output` option has changed. Whatever you pass to it is now relative to the `.csproj` file, not the working directory (as it was before).
+To build a package you still need to call `dotnet publish`. However, the way of handling relative path for `--output` option has changed. Whatever you pass to it is now relative to the `.csproj` file, not the working directory (as it was before).
 
-One important thing about CI: if you install the new .NET Core SDK it will became the default one. It means that all projects, that still use `project.json` file will fail to compile. It's bad for other projects that are compiled on the same CI machine. You can avoid this problem by setting the sdk version for old projects it the corresponding `global.json` file:
+One important thing about CI: if you install the new .NET Core SDK it will become the default one. It means that all projects, that still use `project.json` file will fail to compile. It's bad for other projects that are compiled on the same CI machine. You can avoid this problem by setting the SDK version for old projects it the corresponding `global.json` file:
 
 ```json
 {
@@ -234,6 +234,4 @@ And then in your `.csproj`:
 <Import Project="..\..\settings\common.props" />
 ```
 
-In our solution I have moved all things related to versioning to single `.props` file, common settings to another `.props` file. Then included these in `.csprojs` and removed all `AssemblyInfo.cs` files. In my case I just don't need them anymore. And my new`.csproj` files are now smaller than my old, beloved `project.json` files!
-
-##### Did you like this blog post? Leave a comment so I continue blogging about my ASP.NET Core experience.
+In our solution, I have moved all things related to versioning to single `.props` file, common settings to another `.props` file. Then included these in `.csprojs` and removed all `AssemblyInfo.cs` files. In my case, I just don't need them anymore. And my new`.csproj` files are now smaller than my old, beloved `project.json` files!
