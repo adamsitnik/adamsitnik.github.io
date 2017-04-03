@@ -206,6 +206,6 @@ Sample results:
 
 ## Sources
 
-* [Understanding How General Exploration Works in Intel® VTune™ Amplifier XE](https://software.intel.com/en-us/articles/understanding-how-general-exploration-works-in-intel-vtune-amplifier-xe) by Jackson Marusarz (Intel)
+* [Understanding How General Exploration Works in IntelÂ® VTuneâ„¢ Amplifier XE](https://software.intel.com/en-us/articles/understanding-how-general-exploration-works-in-intel-vtune-amplifier-xe) by Jackson Marusarz (Intel)
 * [CPU Performance Counters on Windows](https://randomascii.wordpress.com/2016/11/27/cpu-performance-counters-on-windows/) by Bruce Dawson
 * [What is Branch Prediction?](http://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-an-unsorted-array/11227902) by [Mysticial](http://stackoverflow.com/users/922184/mysticial)
