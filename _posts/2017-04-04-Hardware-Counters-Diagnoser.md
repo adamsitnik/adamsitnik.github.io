@@ -6,7 +6,7 @@ excerpt_separator: <!--more-->
 
 ## Introduction
 
-BenchmarkDotNet is a powerful .NET library for benchmarking ([more about it](http://benchmarkdotnet.org/)). This post is about one of its features that allows collecting [Hardware Performance Counters](https://en.wikipedia.org/wiki/Hardware_performance_counter). The goal of this post is to describe how it works, what are the limitations and how to use it.
+BenchmarkDotNet is a powerful .NET library for benchmarking ([more about it](http://benchmarkdotnet.org/)). This post describes how you can collect [Hardware Performance Counters](https://en.wikipedia.org/wiki/Hardware_performance_counter) with BenchmarkDotNet. If you want to learn about the ETW internals behind it then you might find [this post](http://adamsitnik.com/Hardware-Counters-ETW/) useful.
 
 ## The Story
 
@@ -24,7 +24,7 @@ And Tanner Gooding [mentioned](https://github.com/dotnet/corefxlab/pull/1278#iss
 > 
 > I also know cache misses and branch mispredictions are also supported, as they are displayed on the internal benchmark comparison site (I'm not sure how to enable those ones though).
 
-I could finally add a new feature to BenchmarkDotNet that was related to performance, not the MSBuild/project.json stuff ;) So I just downloaded the source codes of [xunit-performance](https://github.com/Microsoft/xunit-performance) and [PerfView](https://github.com/microsoft/perfview) and dig into the details. `Microsoft.Diagnostics.Tracing.TraceEvent` is not OSS yet, so I used my favorite .NET decompiler [ILSpy](http://ilspy.net/) to get the full picture. If you are curious how to do it without BenchmarkDotNet you can read  [this post](http://adamsitnik.com/Hardware-Counters-ETW/) about it.
+I could finally add a new feature to BenchmarkDotNet that was related to performance, not the MSBuild/project.json stuff ;) So I just downloaded the source codes of [xunit-performance](https://github.com/Microsoft/xunit-performance) and [PerfView](https://github.com/microsoft/perfview) and dig into the details. `Microsoft.Diagnostics.Tracing.TraceEvent` is not OSS yet, so I used my favorite .NET decompiler [ILSpy](http://ilspy.net/) to get the full picture. 
 
 ## Limitations
 
@@ -142,17 +142,17 @@ public class Cpu_BranchPerdictor
 and the results:
 
 ```
- |             Method |        Mean |    StdDev | BranchInstructions/Op | BranchMispredictions/Op | Mispredict rate |
- |------------------- |------------ |---------- |---------------------- |------------------------ |---------------- |
- |       SortedBranch |  21.4539 us | 0.2449 us |                 70121 |                      24 |           0,04% |
- |     UnsortedBranch | 136.1139 us | 0.4812 us |                 68788 |                   16301 |          23,70% |
- |   SortedBranchless |  28.6705 us | 0.2275 us |                 35711 |                      22 |           0,06% |
- | UnsortedBranchless |  28.9336 us | 0.2737 us |                 35578 |                      17 |           0,05% |
+ |             Method |        Mean | Mispredict rate | BranchInstructions/Op | BranchMispredictions/Op |
+ |------------------- |------------ |---------------- |---------------------- |------------------------ |
+ |       SortedBranch |  21.4539 us |           0,04% |                 70121 |                      24 |
+ |     UnsortedBranch | 136.1139 us |          23,70% |                 68788 |                   16301 |
+ |   SortedBranchless |  28.6705 us |           0,06% |                 35711 |                      22 |
+ | UnsortedBranchless |  28.9336 us |           0,05% |                 35578 |                      17 |
 ```
 
 High Mispredict Rate (`23,70%`) is a clear signal that we are victims of branch prediction failure. Which results in `6x` slowdown!! 
 
-**Note:** The results are scaled per operation.
+**Note:** The results are scaled per operation. Mispredict rate is an extra column that is visible if you use `BranchInstructions` and `BranchMispredictions` counters.
 
 ## How to get it running for .NET Core/Mono on Windows?
 
@@ -192,16 +192,16 @@ Sample results:
 
 
 ```
- |             Method | Runtime |        Mean |    StdDev | BranchInstructions/Op | BranchMispredictions/Op | Mispredict rate |
- |------------------- |-------- |------------ |---------- |---------------------- |------------------------ |---------------- |
- |       SortedBranch |     Clr |  21.3434 us | 0.0878 us |                 65452 |                      22 |           0,03% |
- |     UnsortedBranch |     Clr | 136.2859 us | 0.6528 us |                 73371 |                   17470 |          23,81% |
- |   SortedBranchless |     Clr |  28.7980 us | 0.1212 us |                 38253 |                      19 |           0,05% |
- | UnsortedBranchless |     Clr |  28.9019 us | 0.2365 us |                 33123 |                      15 |           0,05% |
- |       SortedBranch |    Core |  21.2255 us | 0.1566 us |                 82293 |                      28 |           0,03% |
- |     UnsortedBranch |    Core | 137.5567 us | 0.7215 us |                 67572 |                   16237 |          24,03% |
- |   SortedBranchless |    Core |  28.6537 us | 0.1112 us |                 35452 |                      16 |           0,05% |
- | UnsortedBranchless |    Core |  29.0826 us | 0.3322 us |                 41360 |                      19 |           0,05% |
+ |             Method | Runtime |        Mean | Mispredict rate | BranchInstructions/Op | BranchMispredictions/Op |
+ |------------------- |-------- |------------ |---------------- |---------------------- |------------------------ |
+ |       SortedBranch |     Clr |  21.3434 us |           0,03% |                 65452 |                      22 |
+ |     UnsortedBranch |     Clr | 136.2859 us |          23,81% |                 73371 |                   17470 |
+ |   SortedBranchless |     Clr |  28.7980 us |           0,05% |                 38253 |                      19 |
+ | UnsortedBranchless |     Clr |  28.9019 us |           0,05% |                 33123 |                      15 |
+ |       SortedBranch |    Core |  21.2255 us |           0,03% |                 82293 |                      28 |
+ |     UnsortedBranch |    Core | 137.5567 us |          24,03% |                 67572 |                   16237 |
+ |   SortedBranchless |    Core |  28.6537 us |           0,05% |                 35452 |                      16 |
+ | UnsortedBranchless |    Core |  29.0826 us |           0,05% |                 41360 |                      19 |
 ```
 
 ## Sources

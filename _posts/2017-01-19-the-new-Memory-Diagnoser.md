@@ -94,7 +94,7 @@ Visual Studio Memory Allocation Profiler shows `354 000 064` for `1 000 000` of 
 
 ## How to use it?
 
-Now it's part of our core package, so you don't need to install any extra dependencies. It's also enabled by default in the DefaultConfig. However, if you are using some custom config you can turn it on in two ways:
+Now it's part of our core package, so you don't need to install any extra dependencies. ~~It's also enabled by default in the DefaultConfig.~~ Since `0.10.3` it's not enabled by default. You can turn it on in two ways:
 
 * Use the new attribute (apply it on a class that contains Benchmarks):
 
@@ -150,7 +150,7 @@ When reading the results please keep in mind that:
 ```cs
 var summary = BenchmarkRunner.Run<BenchmarksThatMustNotAllocate>();
 
-Assert.True(summary.Reports.All(report => report.GcStats.AllocatedBytes == 0));
+Assert.True(summary.Reports.All(report => report.GcStats.BytesAllocatedPerOperation == 0));
 ```
 
 ## Sources
