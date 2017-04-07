@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Porting ASP.NET Core application to VS 2017.
+title: Porting ASP.NET Core application to VS 2017
 excerpt_separator: <!--more-->
 ---
 

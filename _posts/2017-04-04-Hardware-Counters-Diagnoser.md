@@ -71,7 +71,8 @@ private class CustomConfig : ManualConfig
 {
     public CustomConfig()
     {
-        Add(Job.Default.WithHardwareCounters(HardwareCounter.BranchMispredictions, HardwareCounter.BranchInstructions);
+        Add(Job.Default);
+        Add(HardwareCounter.BranchMispredictions, HardwareCounter.BranchInstructions);
     }
 }
 ```
@@ -168,10 +169,10 @@ Your project file needs to support both frameworks:
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.3.78" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.3.87" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.10.3.78" />
+    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.10.3.87" />
   </ItemGroup>
 </Project>
 ```
@@ -180,8 +181,9 @@ Your BenchmarkDotNet config must enable all the runtimes. You can do it by using
 
 ```cs
 var config = ManualConfig.Create(DefaultConfig.Instance)
-    .With(Job.Clr.WithHardwareCounters(HardwareCounter.BranchMispredictions, HardwareCounter.BranchInstructions))
-    .With(Job.Core.WithHardwareCounters(HardwareCounter.BranchMispredictions, HardwareCounter.BranchInstructions));
+    .With(Job.Clr)
+    .With(Job.Core)
+    .Add(HardwareCounter.BranchMispredictions, HardwareCounter.BranchInstructions);
             
 BenchmarkRunner.Run<Cpu_BranchPerdictor>(config);
 ```
