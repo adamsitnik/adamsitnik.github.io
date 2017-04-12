@@ -11,7 +11,7 @@ permalink: /speaking/
 	- TBA
 * My awesome journey with Open Source
 	- DotNext conference, St. Petersburg, Russia (**19-20.05.2017**) ([website](https://dotnext-piter.ru/talks/my-awesome-journey-with-open-source/))
-	- Local .NET User Group, Warsaw, Poland (**20.04.2017**)
+	- Local .NET User Group, Warsaw, Poland (**20.04.2017**) ([event](https://www.meetup.com/WG-NET/events/239152568))
 	- Local .NET User Group, Wrocław, Poland (**18.04.2017**) ([event](https://www.meetup.com/wrocnet/events/239015139/))
 	- Local .NET User Group, Gdańsk, Poland (**13.04.2017**) ([event](https://www.meetup.com/TG-NET/events/238983872/))
 * Exceptional Exceptions in .NET ([slides](https://assets.contentful.com/9n3x4rtjlya6/NWJyKzBY6iACOw4UYuw0Q/3fea68ae45dbc1741eb3b97f651e73d4/Adam_Sitnik_Exceptional_Exceptions_in_.NET.pdf), [samples](https://github.com/adamsitnik/ExceptionalExceptions), [video](https://www.youtube.com/watch?v=U92Ts53win4))
