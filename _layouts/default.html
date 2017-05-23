@@ -11,7 +11,9 @@
 
     <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}/style.css" />
     <link rel="alternate" type="application/rss+xml" title="{{ site.name }} - {{ site.description }}" href="{{ site.baseurl }}/feed.xml" />
-
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/anchor-js/3.2.0/anchor.min.js"></script>
+    
     <!-- Created with Jekyll Now - http://github.com/barryclark/jekyll-now -->
   </head>
 
@@ -48,5 +50,9 @@
     </div>
 
     {% include analytics.html %}
+  <script>
+    anchors.options.placement = 'left';
+    anchors.add();
+  </script>
   </body>
 </html>
