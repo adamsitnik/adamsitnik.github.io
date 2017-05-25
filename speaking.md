@@ -9,7 +9,7 @@ permalink: /speaking/
 
 * Powerful benchmarking with BenchmarkDotNet
 	- TBA
-* My awesome journey with Open Source
+* My awesome journey with Open Source ([slides](http://adamsitnik.com/files/MyAwesomeJourneyWithOpenSource.pdf))
 	- DotNext conference, St. Petersburg, Russia (19-20.05.2017) ([website](https://dotnext-piter.ru/talks/my-awesome-journey-with-open-source/))
 	- Local .NET User Group, Warsaw, Poland (20.04.2017) ([event](https://www.meetup.com/WG-NET/events/239152568))
 	- Local .NET User Group, Wrocław, Poland (18.04.2017) ([event](https://www.meetup.com/wrocnet/events/239015139/))
