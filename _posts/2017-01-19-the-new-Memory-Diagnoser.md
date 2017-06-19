@@ -69,7 +69,6 @@ public class Benchmarks
 
 The results (some columns were removed for brevity):
 
-```
 |     Method | Platform |          Mean |     StdDev |  Gen 0 | Allocated |
 |----------- |--------- |-------------- |----------- |------- |---------- |
 | EmptyArray |      X86 |     4.4947 ns |  0.0530 ns |      - |       0 B |
@@ -78,7 +77,6 @@ The results (some columns were removed for brevity):
 | EmptyArray |      X64 |     5.9602 ns |  0.0411 ns |      - |       0 B |
 | EightBytes |      X64 |     4.6416 ns |  0.0956 ns | 0.0097 |      32 B |
 |   SomeLinq |      X64 | 1,620.6928 ns | 12.6973 ns | 0.0631 |     496 B |
-```
 
 Let's analyse the results:
 
@@ -119,12 +117,10 @@ private class CustomConfig : ManualConfig
 
 ## How to read the results
 
-```
 |     Method |  Gen 0 | Allocated |
 |----------- |------- |---------- |
 |          A |      - |       0 B |
 |          B |      1 |     496 B |
-```
 
 * Allocated contains the size of allocated **managed** memory. **Stackalloc/native heap allocations are not included.** It's per single invocation, **inclusive**.
 * The `Gen X` column contains the number of `Gen X` collections per ***1 000*** Operations. If the value is equal 1, then it means that GC collects memory once per one thousand of benchmark invocations in generation `X`. BenchmarkDotNet is using some heuristic when running benchmarks, so the number of invocations can be different for different runs. Scaling makes the results comparable.
@@ -145,7 +141,7 @@ When reading the results please keep in mind that:
 * Why is the Allocated column missing on Mono? Because Mono [does not](http://stackoverflow.com/questions/40234948/how-to-get-the-number-of-allocated-bytes-in-mono) provide any API to read the number of allocated bytes.
 * Can the MemoryDiagnoser affect the time results by introducing some extra overhead? No, because we perform separate run for the diagnosers only. The results from this run are not included in the timing results.
 * Is there any API in BenchmarkDotNet that exposes the GC Statistics? Yes, the `summary` returned by `BenchmarkRunner.Run` contains all `reports`, which expose the `GcStats` property.
-* How to verify that particular code noes not perform any heap allocations?
+* How to verify that particular code does not perform any heap allocations?
 
 ```cs
 var summary = BenchmarkRunner.Run<BenchmarksThatMustNotAllocate>();
