@@ -209,7 +209,7 @@ Gen 2 collections! `100 000 > 85 000`, so we get our first Full Garbage Collecti
 
 ### BufferAllocated
 
-But what happens if you try to rent a buffer, that exceeds the max array length of given pool (2^20)?
+But what happens if you try to rent a buffer, that exceeds the max array length of given pool (2^20 for ArrayPool.Shared)?
 
  |               Method | SizeInBytes |           Mean |    Gen 0 |    Gen 1 |    Gen 2 |  Allocated |
  |--------------------- |------------ |---------------:|---------:|---------:|---------:|-----------:|
@@ -229,6 +229,10 @@ But what happens if you try to rent a buffer, that exceeds the max array length 
 
 To avoid this problem you can use `ArrayPool<T>.Create` method, which creates a pool with custom `maxArrayLength`. **But don't create too many custom pools!!** The goal of pooling is to keep LOH small. If you create too many pools, you will end up with large LOH, full of big arrays that can not be reclaimed by GC (because they are going to be rooted by your custom pools). This is why all popular libraries like ASP.NET Core or ImageSharp use `ArrayPool<T>.Shared` **only**. In the pessimistic scenario with `ArrayPool<T>.Shared` you will be slightly slower than `new`. In the optimistic, much faster. So you can use it by default for large objects.
 
+## Pooling MemoryStream(s)
+
+Sometimes an array might be not enough to avoid LOH allocations. An example can be 3rd party api that accepts `Stream` instance. Thanks to [Victor Baybekov](https://twitter.com/buybackoff) I have discovered [Microsoft.IO.RecyclableMemoryStream](https://github.com/Microsoft/Microsoft.IO.RecyclableMemoryStream). This library provides pooling for MemoryStream objects. It was designed by Bing engineers to help with LOH issues. For more details you can go [this](http://www.philosophicalgeek.com/2015/02/06/announcing-microsoft-io-recycablememorystream/) blog post by Bet Watson.
+
 ## Summary
 
 * LOH = Gen 2 = Full GC = bad performance
@@ -245,4 +249,6 @@ To avoid this problem you can use `ArrayPool<T>.Create` method, which creates a 
 * Source code: [CoreFx](https://github.com/dotnet/corefx/tree/master/src/System.Buffers/src/System/Buffers) and [CoreClr](https://github.com/dotnet/coreclr/tree/master/src/mscorlib/shared/System/Buffers) repos
 * [Pro .NET Performance](https://www.amazon.com/dp/1430244585) book by Sasha Goldshtein, Dima Zurbalev, Ido Flatow 
 * [Fundamentals of Garbage Collection](https://msdn.microsoft.com/en-us/library/ee787088(v=vs.110).aspx#generations) article by MSDN
+* [Large Object Heap Uncovered](https://blogs.msdn.microsoft.com/maoni/2016/05/31/large-object-heap-uncovered-from-an-old-msdn-article/) article by Maoni Stephens
 * [No More Memory Fragmentation on the .NET Large Object Heap](https://blogs.msdn.microsoft.com/mariohewardt/2013/06/26/no-more-memory-fragmentation-on-the-net-large-object-heap/) article by Mario Hewardt
+* [Announcing Microsoft.IO.RecycableMemoryStream](http://www.philosophicalgeek.com/2015/02/06/announcing-microsoft-io-recycablememorystream/) article by Ben Watson
