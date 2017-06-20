@@ -231,7 +231,7 @@ To avoid this problem you can use `ArrayPool<T>.Create` method, which creates a 
 
 ## Pooling MemoryStream(s)
 
-Sometimes an array might be not enough to avoid LOH allocations. An example can be 3rd party api that accepts `Stream` instance. Thanks to [Victor Baybekov](https://twitter.com/buybackoff) I have discovered [Microsoft.IO.RecyclableMemoryStream](https://github.com/Microsoft/Microsoft.IO.RecyclableMemoryStream). This library provides pooling for MemoryStream objects. It was designed by Bing engineers to help with LOH issues. For more details you can go [this](http://www.philosophicalgeek.com/2015/02/06/announcing-microsoft-io-recycablememorystream/) blog post by Bet Watson.
+Sometimes an array might be not enough to avoid LOH allocations. An example can be 3rd party api that accepts `Stream` instance. Thanks to [Victor Baybekov](https://twitter.com/buybackoff) I have discovered [Microsoft.IO.RecyclableMemoryStream](https://github.com/Microsoft/Microsoft.IO.RecyclableMemoryStream). This library provides pooling for MemoryStream objects. It was designed by Bing engineers to help with LOH issues. For more details you can go [this](http://www.philosophicalgeek.com/2015/02/06/announcing-microsoft-io-recycablememorystream/) blog post by Ben Watson.
 
 ## Summary
 
