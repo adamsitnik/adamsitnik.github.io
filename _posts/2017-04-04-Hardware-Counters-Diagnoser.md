@@ -142,14 +142,12 @@ public class Cpu_BranchPerdictor
 
 and the results:
 
-```
  |             Method |        Mean | Mispredict rate | BranchInstructions/Op | BranchMispredictions/Op |
  |------------------- |------------ |---------------- |---------------------- |------------------------ |
  |       SortedBranch |  21.4539 us |           0,04% |                 70121 |                      24 |
- |     UnsortedBranch | 136.1139 us |          23,70% |                 68788 |                   16301 |
+ |     UnsortedBranch | 136.1139 us |          **23,70%** |                 68788 |                   16301 |
  |   SortedBranchless |  28.6705 us |           0,06% |                 35711 |                      22 |
  | UnsortedBranchless |  28.9336 us |           0,05% |                 35578 |                      17 |
-```
 
 High Mispredict Rate (`23,70%`) is a clear signal that we are victims of branch prediction failure. Which results in `6x` slowdown!! 
 
@@ -192,19 +190,16 @@ And then you just need to run the host as classic .NET: `dotnet run -c Release -
 
 Sample results:
 
-
-```
  |             Method | Runtime |        Mean | Mispredict rate | BranchInstructions/Op | BranchMispredictions/Op |
  |------------------- |-------- |------------ |---------------- |---------------------- |------------------------ |
  |       SortedBranch |     Clr |  21.3434 us |           0,03% |                 65452 |                      22 |
- |     UnsortedBranch |     Clr | 136.2859 us |          23,81% |                 73371 |                   17470 |
+ |     UnsortedBranch |     Clr | 136.2859 us |          **23,81%** |                 73371 |                   17470 |
  |   SortedBranchless |     Clr |  28.7980 us |           0,05% |                 38253 |                      19 |
  | UnsortedBranchless |     Clr |  28.9019 us |           0,05% |                 33123 |                      15 |
  |       SortedBranch |    Core |  21.2255 us |           0,03% |                 82293 |                      28 |
- |     UnsortedBranch |    Core | 137.5567 us |          24,03% |                 67572 |                   16237 |
+ |     UnsortedBranch |    Core | 137.5567 us |          **24,03%** |                 67572 |                   16237 |
  |   SortedBranchless |    Core |  28.6537 us |           0,05% |                 35452 |                      16 |
  | UnsortedBranchless |    Core |  29.0826 us |           0,05% |                 41360 |                      19 |
-```
 
 ## Sources
 
