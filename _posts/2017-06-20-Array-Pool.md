@@ -227,7 +227,8 @@ But what happens if you try to rent a buffer, that exceeds the max array length 
 {: .center}
 ![BufferAllocated event](/images/arrayPool/perfView_results.png)
 
-To avoid this problem you can use `ArrayPool<T>.Create` method, which creates a pool with custom `maxArrayLength`. **But don't create too many custom pools!!** The goal of pooling is to keep LOH small. If you create too many pools, you will end up with large LOH, full of big arrays that can not be reclaimed by GC (because they are going to be rooted by your custom pools). This is why all popular libraries like ASP.NET Core or ImageSharp use `ArrayPool<T>.Shared` **only**. In the pessimistic scenario with `ArrayPool<T>.Shared` you will be slightly slower than `new`. In the optimistic, much faster. So you can use it by default for large objects.
+To avoid this problem you can use `ArrayPool<T>.Create` method, which creates a pool with custom `maxArrayLength`. **But don't create too many custom pools!!** The goal of pooling is to keep LOH small. If you create too many pools, you will end up with large LOH, full of big arrays that can not be reclaimed by GC (because they are going to be rooted by your custom pools). This is why all popular libraries like ASP.NET Core or ImageSharp use `ArrayPool<T>.Shared` **only**. 
+If you start using `ArrayPool<T>.Shared` instead of allocating with `new` operator, then in the pessimistic scenario (asking it for array > default max size) you will be slightly slower than before (you will do an extra check and then allocate). But in the optimistic scenario, you will be much faster, because you will just rent it from the pool. So this is why I believe that you can use `ArrayPool<T>.Shared` by default. `ArrayPool<T>.Create` should be used if `BufferAllocated` events are frequent.
 
 ## Pooling MemoryStream(s)
 
