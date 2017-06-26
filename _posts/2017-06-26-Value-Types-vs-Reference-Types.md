@@ -6,7 +6,7 @@ excerpt_separator: <!--more-->
 
 tl;dr `structs` have better data locality and don't add any pressure for GC. But they are expensive to copy and you can accidentally  box them which is bad.
 
-## Introduction
+### Introduction
 
 The .NET framework implements Reference Types and Value Types. `C#` allows us to define custom value types by using `struct` and `enum` keywords. `class`, `delegate` and `interface` are for reference types. Primitive types, like `byte`, `char`, `short`, `int` and `long` are value types, but developers can't define custom primitive types. In Java primitive types are also value types, but Java does not expose a possibility to define custom value types for developers ;) 
 
