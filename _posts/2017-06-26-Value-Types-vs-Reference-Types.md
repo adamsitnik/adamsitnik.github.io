@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Value Types vs Reference Types: performance
+title: Value Types vs Reference Types
 excerpt_separator: <!--more-->
 ---
 
