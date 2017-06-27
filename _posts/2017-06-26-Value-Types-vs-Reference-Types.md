@@ -118,7 +118,7 @@ public class DataLocality
     {
         int item1Sum = 0, item2Sum = 0;
 
-        var array = **arrayOfVal**;
+        var array = arrayOfVal;
         for (int i = 0; i < array.Length; i++)
         {
             ref ValueTuple<int, int> reference = ref array[i];
@@ -134,7 +134,7 @@ public class DataLocality
     {
         int item1Sum = 0, item2Sum = 0;
 
-        var array = **arrayOfRef**;
+        var array = arrayOfRef;
         for (int i = 0; i < array.Length; i++)
         {
             ref Tuple<int, int> reference = ref array[i];
@@ -246,12 +246,12 @@ Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
 Runtime=Clr  Force=False  InvocationCount=1048576  
 ```
 
- |           Method |       Jit | Platform | ScaledSD |  Gen 0 | Allocated |
- |----------------- |---------- |--------- |---------:|-------:|----------:|
- | CreateValueTuple | LegacyJit |      X86 |     0.00 |      **-** |       **0 B** |
- |      CreateTuple | LegacyJit |      X86 |     0.99 | **0.0050** |      **16 B** |
- | CreateValueTuple |    RyuJit |      X64 |     0.00 |      **-** |       **0 B** |
- |      CreateTuple |    RyuJit |      X64 |     0.03 | **0.0076** |      **24 B** |
+ |           Method |       Jit | Platform |  Gen 0 | Allocated |
+ |----------------- |---------- |--------- |-------:|----------:|
+ | CreateValueTuple | LegacyJit |      X86 |      **-** |       **0 B** |
+ |      CreateTuple | LegacyJit |      X86 | **0.0050** |      **16 B** |
+ | CreateValueTuple |    RyuJit |      X64 |      **-** |       **0 B** |
+ |      CreateTuple |    RyuJit |      X64 | **0.0076** |      **24 B** |
 
  As you can see, creating Value Types means No GC (`-` in Gen 0 column).
 
@@ -340,7 +340,7 @@ We can tell the C# compiler, that given generic method accepts an instance of va
 void Trick<T>(T instance)
     where T : struct, IInterface
 {
-    instance.WillBeDeVirtualized();
+    instance.Method();
 }
 ```
 
@@ -409,7 +409,54 @@ Job=RyuJitX64  Jit=RyuJit  Platform=X64
  | ValueTypeSmart | **1.145 ns** | 0.0101 ns | 0.0094 ns |   **0.21** |      - |       **0 B** |
  |  ReferenceType | **2.212 ns** | 0.0096 ns | 0.0081 ns |   **0.40** |      - |       0 B |
 
- By applying this simple trick we were able to not only avoid boxing but also outperform reference type interface method invocation! It was possible due to method de-virtualization. JIT needs to handle value types of different sizes. So every time a generic method/type is compiled by the JIT and the generic type argument is a Value Type, JIT compiles and stores separate instance per type. In that case, the type is known, so it can de-virtualize the call. Which means that it replaces the virtual call with the call to exact implementation.
+ By applying this simple trick we were able to not only avoid boxing but also outperform reference type interface method invocation! It was possible due to the optimization performed by JIT. I am going to call it method de-virtualization because I don't have a better name for it. How does it work? Let's consider following example:
+ 
+ ```cs
+ public void Method<T>(T instance)
+        where T : struct, IDisposable
+{
+        instance.Dispose();
+}
+```
+ 
+ When the `T` is constrained with `where T : struct, INameOfTheInterface`, the C# compiler emits additional `IL` instruction called `constrained` ([Docs](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx)).
+ 
+ ```cs
+ .method public hidebysig 
+    instance void Method<valuetype .ctor ([mscorlib]System.IDisposable, [mscorlib]System.ValueType) T> (
+        !!T 'instance'
+    ) cil managed 
+{
+    .maxstack 8
+
+    IL_0000: ldarga.s 'instance'
+    IL_0002: constrained. !!T
+    IL_0008: callvirt instance void [mscorlib]System.IDisposable::Dispose()
+    IL_000d: ret
+} // end of method C::Method
+```
+
+If there is no constraint the instance can be anything: value or reference type. In case it's value type, the JIT performs boxing.
+This generic constraint is a clear signal for JIT that `T` is a value type, so it can avoid boxing.
+
+JIT handles value types in a different way than reference types. Operations, like passing to a method or returning from it are the same for all reference types. We always deal with pointers, which have single, same size for all reference types. So JIT is reusing the compiled generic code for reference types because it can treat them in the same way. Imagine an array of `objects` or `strings`. From JITs perspective, it is just an array of pointers. So the array's indexer implementation will be the same for all reference types.
+
+Value Types are different. Each of them can have different size. For example passing `integer` and custom `struct` with two integer fields to a method has a different native implementation. In one case we push single int to the stack, in the other, we might need to move two fields to the registers, and then push them to the stack. So it's different per every value type. 
+
+This is why JIT compiles ever generic method/type separately for generic value types arguments.
+
+```cs
+Method<object>(); // JIT compiled code is common for all reference types
+Method<string>(); // JIT compiled code is common for all reference types
+Method<int>(); // dedicated version for int
+Method<long>(); // dedicated version for long
+Method<DateTime>(); // dedicated version for DateTime
+```
+
+It might lead to [generic Code Bloat](https://blogs.msdn.microsoft.com/carlos/2009/11/09/net-generics-and-code-bloat-or-its-lack-thereof/). But the great thing is that at this point in time, JIT can compile **tailored** code per type. And since the type is know, it can **replace virtual call with direct call**. As [Victor Baybekov](https://twitter.com/buybackoff) mentioned in the comments, it can even remove the unnecessary null check for the call. It's value type, so it can not be null. Inlining is also possible. 
+For small methods, which are executed very often, like `.Equals()` in [custom Dictionary implementation](https://github.com/Spreads/Spreads.Unsafe#fastdictionary) it can be very big performance gain.
+
+**Note:** If you would like to play with generated IL code you can use the awesome [SharpLab](https://sharplab.io/#v2:C4LglgNgNAJiDUAfAAgBgATIIwG4CwAUMgMyYBM6AwugN6HoOanIAs6AsgKbAAWA9jAA8AFQB8ACmHowAOwDOwAIYyAxpwCU9RtoDuPTgCdO6KSHQKDAVxXAo6AJIARMHIAOfOYoBGETloZ0BNrBjLIKymoAdM5uHpzi6vhBjAC+hClAA===).
 
 ## Copying
 
@@ -520,4 +567,8 @@ Runtime=Clr
 * [Understanding How General Exploration Works in Intel® VTune™ Amplifier XE](https://software.intel.com/en-us/articles/understanding-how-general-exploration-works-in-intel-vtune-amplifier-xe) by Jackson Marusarz (Intel)
 * [A new stackalloc operator for reference types with CoreCLR and Roslyn](http://xoofx.com/blog/2015/10/08/stackalloc-for-class-with-roslyn-and-coreclr/) blog post by Alexandre Mutel
 * [Boxing and Unboxing](https://msdn.microsoft.com/pl-pl/library/yz2be5wk(v=vs.90).aspx) article by MSDN
-* [Heap Allocations Viewer plugin](https://blog.jetbrains.com/dotnet/2014/06/06/heap-allocations-viewer-plugin/) by Matt Ellis (JetBrains)
+* [Heap Allocations Viewer plugin](https://blog.jetbrains.com/dotnet/2014/06/06/heap-allocations-viewer-plugin/) blog post by Matt Ellis (JetBrains)
+* [SharpLab.io](https://sharplab.io/)
+* [OpCodes.Constrained Field](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx) article by MSDN
+* [.NET Generics and Code Bloat](https://blogs.msdn.microsoft.com/carlos/2009/11/09/net-generics-and-code-bloat-or-its-lack-thereof/) article by MSDN
+* [What happens with a generic constraint that removes this requirement?](https://stackoverflow.com/a/5532061) Stack Overflow answer by Eric Lippert
