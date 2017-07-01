@@ -19,6 +19,8 @@ permalink: /speaking/
 	- Local .NET User Group, Warsaw, Poland (17.11.2016) ([event](https://www.meetup.com/WG-NET/events/235483282/))
 	- Local .NET User Group, Gdańsk, Poland (13.10.2016) ([event](https://www.meetup.com/TG-NET/events/234690407/))
 * State of the .NET Performance
+	- ADC .NET Core Conf, Cologne, Germany (**19.09.2017**) ([website](http://adc.ms/2017/sprecher))
+	- .NET TechTalks MeetUp, Prague, Czech Republic (**19.07.2017**) ([event](https://www.wug.cz/praha/akce/951--Net-TechTalks))
 	- NDC conference, Oslo, Norway (15.06.2017) ([slides](http://adamsitnik.com/files/NDC2017.pdf), [benchmarks](https://github.com/adamsitnik/StateOfTheDotNetPerformance), [website](http://ndcoslo.com/talk/state-of-the-net-performance/))
 	- Local .NET User Group, Gdańsk, Poland (09.03.2017) ([event](https://www.meetup.com/TG-NET/events/238136930/))
 	- Local .NET User Group, Moscow, Russia (7.12.2016) ([slides](http://www.slideshare.net/yuliafast/adam-sitnik-state-of-the-net-performance), [video](https://www.youtube.com/watch?v=PJbTXiun2qM), [benchmarks](https://github.com/adamsitnik/csharpsevenbenchmarks))
