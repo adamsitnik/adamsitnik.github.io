@@ -28,6 +28,8 @@ ref int localReference = ref localVariable;
 * `ref array[0]` - De**ref**erencing array's first element.
 * `ref int method()` - The result of the method is passed by **ref**erence. The method still returns an int. [Not a pointer!](http://mustoverride.com/refs-not-ptrs/)
 
+<!--more-->
+
 ## Passing arguments to methods by reference
 
 In C# by default Value Types are passed to methods by value. It means that the Value Type instance is copied every time we pass it to a method. Or when we return it from a method. The bigger the Value Type is, the more expensive it is to copy it.
@@ -300,6 +302,14 @@ Don't forget to support the new C# 7.2 features! Thumbs up!
 
 {: .center}
 ![Thumbs up](/images/references/thumbsup.png)
+
+## Summary
+
+* C# features like ref parameters, locals and returns can help us to avoid copying the memory.
+* They are using an existing CLR feature called "managed pointers". You need modern IDE to use them, but they will run anywhere.
+* Using them is safe and can be faster than using `unsafe` pointers.
+* We need to measure and prove that using them is beneficial before we increase the complexity of our code.
+* There are many limitations as of today. Some of them will be addressed by C# 7.2. Some are already solved by the `System.Runtime.CompilerServices.Unsafe` api. 
 
 ## Sources
 
