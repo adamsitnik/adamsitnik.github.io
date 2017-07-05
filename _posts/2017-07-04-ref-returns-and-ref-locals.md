@@ -32,7 +32,7 @@ ref int localReference = ref localVariable;
 
 ## Passing arguments to methods by reference
 
-In C# by default Value Types are passed to methods by value. It means that the Value Type instance is copied every time we pass it to a method. Or when we return it from a method. The bigger the Value Type is, the more expensive it is to copy it.
+In C# all parameters are passed to methods by value by default. It means that the Value Type instance is copied every time we pass it to a method. Or when we return it from a method. The bigger the Value Type is, the more expensive it is to copy it. For small value types, the JIT compiler might optimize the copying (inline the method, use registers for copying & more).
 
 We can pass arguments to methods by reference. It's not a new feature, it was part of C# 1.0. Anyway, I am going to measure it to make sure that it actually improves the performance. Once again I am using [BenchmarkDotNet](http://benchmarkdotnet.org/) for benchmarking.
 
@@ -246,7 +246,7 @@ public unsafe void ByReferenceUnsafe()
 
 To our surprise, the safe way is faster than unsafe! Why is that?
 
-When we are using safe references, we don't need to pin objects in memory. GC understand managed pointers and knows how to update them when it's compacting the memory. With `unsafe` this is not true, the managed memory needs to be pinned before it can be used.
+When we are using safe references, we don't need to pin objects in memory. GC understand managed pointers and knows how to update them when it's compacting the memory. With `unsafe` this is not true, the managed memory needs to be pinned before it can be used.  As mentioned by [Victor Baybekov](https://twitter.com/buybackoff) on Twitter, using `fixed` keyword prevent from inlining.
 
 **Note:** This micro-benchmark is not including the side effects of pinning memory. If you pin many managed arrays in memory, then the GC has a lot of extra work to do when it's compacting the memory. Once again I will redirect you to [Pro .NET Performance](https://www.amazon.com/dp/1430244585) book by Sasha Goldshtein, Dima Zurbalev, Ido Flatow which has a whole chapter dedicated to Garbage Collection in .NET.
 

@@ -4,7 +4,7 @@ title: Value Types vs Reference Types
 excerpt_separator: <!--more-->
 ---
 
-tl;dr `structs` have better data locality and don't add any pressure for GC. But they are expensive to copy and you can accidentally  box them which is bad.
+tl;dr `structs` have better data locality. Value types add much less pressure for the GC than reference types. But big value types are expensive to copy and you can accidentally box them which is bad.
 
 ### Introduction
 
@@ -42,6 +42,8 @@ CPU implements numerous performance optimizations. One of them is cache, which i
 
 {: .center}
 ![How CPU Cache work](/images/valueTypesVsReferenceTypes/Cache.png)
+
+**Note:** Multithreading affects CPU cache performance. In order to make it easier to understand, the following description assumes single core.
 
 Whenever you try to read a value, CPU checks the first level of cache (L1). If it's a **hit**, the value is being returned. Otherwise, it checks the second level of cache (L2). If the value is there, it's being copied to L1 and returned. Otherwise, it checks L3 (if it's present). 
 
@@ -185,11 +187,11 @@ The more loop iterations (Count column), the more Cache Misses events we get. **
 
 ## GC Impact
 
-Reference Types are always allocated on the managed heap (it may change in the [future](http://xoofx.com/blog/2015/10/08/stackalloc-for-class-with-roslyn-and-coreclr/)). Heap is managed by Garbage Collector (GC). The allocation of heap memory is fast. **The problem is that the deallocation is non-deterministic and it takes some time to perform the cleanup**.
+Reference Types are always allocated on the managed heap (it may change in the [future](http://xoofx.com/blog/2015/10/08/stackalloc-for-class-with-roslyn-and-coreclr/)). Heap is managed by Garbage Collector (GC). The allocation of heap memory is fast. **The problem is that the deallocation is performed by non-deterministic GC**. GC implements own heuristic which allows it to decide when to perform the cleanup. The cleanup itself takes some time. It means that you can not predict when the cleanup will take place and it adds extra overhead.
 
-Value Types can be allocated both on the stack and the heap. Stack is not managed by GC. Anytime you declare a local value type variable it's allocated on the stack. When method ends, the stack is being unwinded and the value is gone. **This deallocation is super fast. And no extra pressure for the GC!**
+Value Types can be allocated both on the stack and the heap. Stack is not managed by GC. Anytime you declare a local value type variable it's allocated on the stack. When method ends, the stack is being unwinded and the value is gone. **This deallocation is super fast. And in overall we have less pressure for the GC!** The pressure is not equal to zero because anyway, GC traverses stacks, so the deeper the stack the more work it might have.
 
-But the Value Types can be also allocated on the managed heap. If you allocate an array of bytes, then the array is allocated on the managed heap. This content is transparent to GC. They are not reference type instances, so GC does not track them in any way. So we still follow the "NO GC" rule.
+But the Value Types can be also allocated on the managed heap. If you allocate an array of bytes, then the array is allocated on the managed heap. This content is transparent to GC. They are not reference type instances, so GC does not track them in any way. But when the small array of value types gets promoted to older GC generation, the content will be copied by the GC.
 
 ### Benchmarks
 
@@ -254,6 +256,8 @@ Runtime=Clr  Force=False  InvocationCount=1048576
  |      CreateTuple |    RyuJit |      X64 | **0.0076** |      **24 B** |
 
  As you can see, creating Value Types means No GC (`-` in Gen 0 column).
+
+ **Note:** If value type contains reference types GC will emit write barriers for write access to the reference fields. So No GC is not 100% true for value types that contain references.
 
 ## Boxing
 
@@ -460,7 +464,7 @@ For small methods, which are executed very often, like `.Equals()` in [custom Di
 
 ## Copying
 
-In C# by default Value Types are passed to methods by value. It means that the Value Type instance is copied every time we pass it to a method. Or when we return it from a method. The bigger the Value Type is, the more expensive it is to copy it.
+In C# by default Value Types are passed to methods by value. It means that the Value Type instance is copied every time we pass it to a method. Or when we return it from a method. The bigger the Value Type is, the more expensive it is to copy it. For small value types, the JIT compiler might optimize the copying (inline the method, use registers for copying & more).
 
 ```cs
 [RyuJitX64Job, LegacyJitX86Job]
