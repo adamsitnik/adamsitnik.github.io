@@ -39,8 +39,6 @@ h1, h2, h3, h4, h5, h6 {
   margin: 1em 0 15px;
   padding: 0;
 
-  border-bottom: 1px solid black;
-
   @include mobile {
     line-height: 1.4;
   }
@@ -288,6 +286,10 @@ footer {
 /* To center images */
 .center {
     text-align: center;
+}
+
+.entry > h1, h2, h3, h4, h5, h6 {
+  border-bottom: 1px solid $lightGray;
 }
 
 .share {
