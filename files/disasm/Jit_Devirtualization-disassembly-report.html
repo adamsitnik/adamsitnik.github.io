@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>DisassemblyDiagnoser Output Jit_Devirtualization</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<table>
+<thead>
+<tr><th colspan="7">Jit_Devirtualization.CallVirtualMethod</th></tr>
+<tr>
+<th>LegacyJit X64 Clr </th>
+<th>LegacyJit X86 Clr </th>
+<th>RyuJit X64 Clr </th>
+<th>RyuJit X64 Core .NET Core 1.1</th>
+<th>RyuJit X64 Core .NET Core 2.0</th>
+<th>LegacyJit X64 Mono x64 </th>
+<th>LegacyJit X86 Mono x86 </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="vertical-align:top;"><pre><code>
+7FFC9D2D7FA0 DisDemo.Jit_Devirtualization.CallVirtualMethod()
+00007ffc`9d2d7fa0 488b4908        mov     rcx,qword ptr [rcx+8] 
+00007ffc`9d2d7fa4 803900          cmp     byte ptr [rcx],0 
+00007ffc`9d2d7fa7 ba0a000000      mov     edx,0Ah 
+00007ffc`9d2d7fac 488d0565eefeff  lea     rax,[00007ffc`9d2c6e18] 
+00007ffc`9d2d7fb3 48ffe0          jmp     rax 
+00007ffc`9d2d7fb6 c3              ret 
+00007ffc`9d2d7fb7 0019            add     byte ptr [rcx],bl 
+00007ffc`9d2d7fb9 0000            add     byte ptr [rax],al 
+00007ffc`9d2d7fbb 003e            add     byte ptr [rsi],bh 
+00007ffc`9d2d7fbd 0000            add     byte ptr [rax],al 
+00007ffc`9d2d7fbf 0000            add     byte ptr [rax],al 
+00007ffc`9d2d7fc1 0000            add     byte ptr [rax],al 
+00007ffc`9d2d7fc3 0000            add     byte ptr [rax],al 
+00007ffc`9d2d7fc5 0000            add     byte ptr [rax],al 
+00007ffc`9d2d7fc7 0038            add     byte ptr [rax],bh 
+00007ffc`9d2d7fc9 3936            cmp     dword ptr [rsi],esi 
+00007ffc`9d2d7fcb 9d              popfq 
+00007ffc`9d2d7fcc fc              cld 
+00007ffc`9d2d7fcd 7f00            jg      00007ffc`9d2d7fcf 
+00007ffc`9d2d7fcf 005357          add     byte ptr [rbx+57h],dl 
+00007ffc`9d2d7fd2 4883ec28        sub     rsp,28h 
+
+7FFC9D2D7FD0 DisDemo.Jit_Devirtualization+Operation.OperateTwice(Int32)
+00007ffc`9d2d7fd0 53              push    rbx 
+00007ffc`9d2d7fd1 57              push    rdi 
+00007ffc`9d2d7fd2 4883ec28        sub     rsp,28h 
+00007ffc`9d2d7fd6 488bf9          mov     rdi,rcx 
+00007ffc`9d2d7fd9 488b07          mov     rax,qword ptr [rdi] 
+00007ffc`9d2d7fdc 488b4840        mov     rcx,qword ptr [rax+40h] 
+00007ffc`9d2d7fe0 488b5920        mov     rbx,qword ptr [rcx+20h] 
+00007ffc`9d2d7fe4 488bcf          mov     rcx,rdi 
+00007ffc`9d2d7fe7 ffd3            call    rbx 
+00007ffc`9d2d7fe9 8bd0            mov     edx,eax 
+00007ffc`9d2d7feb 488bcf          mov     rcx,rdi 
+00007ffc`9d2d7fee 488bc3          mov     rax,rbx 
+00007ffc`9d2d7ff1 4883c428        add     rsp,28h 
+00007ffc`9d2d7ff5 5f              pop     rdi 
+00007ffc`9d2d7ff6 5b              pop     rbx 
+00007ffc`9d2d7ff7 48ffe0          jmp     rax 
+00007ffc`9d2d7ffa 4883c428        add     rsp,28h 
+00007ffc`9d2d7ffe 5f              pop     rdi 
+00007ffc`9d2d7fff 5b              pop     rbx 
+00007ffc`9d2d8000 c3              ret 
+00007ffc`9d2d8001 0000            add     byte ptr [rax],al 
+00007ffc`9d2d8003 0019            add     byte ptr [rcx],bl 
+00007ffc`9d2d8005 06              ??? 
+00007ffc`9d2d8006 0300            add     eax,dword ptr [rax] 
+00007ffc`9d2d8008 06              ??? 
+00007ffc`9d2d8009 42027001        add     sil,byte ptr [rax+1] 
+00007ffc`9d2d800d 3000            xor     byte ptr [rax],al 
+00007ffc`9d2d800f 003e            add     byte ptr [rsi],bh 
+
+Abstract method
+DisDemo.Jit_Devirtualization+Operation.Operate(Int32)
+
+</code></pre></td>
+<td style="vertical-align:top;"><pre><code>
+2A11480 DisDemo.Jit_Devirtualization.CallVirtualMethod()
+02a11480 55              push    ebp 
+02a11481 8bec            mov     ebp,esp 
+02a11483 56              push    esi 
+02a11484 8b7104          mov     esi,dword ptr [ecx+4] 
+02a11487 8bce            mov     ecx,esi 
+02a11489 ba0a000000      mov     edx,0Ah 
+02a1148e 8b01            mov     eax,dword ptr [ecx] 
+02a11490 8b4028          mov     eax,dword ptr [eax+28h] 
+02a11493 ff5010          call    dword ptr [eax+10h] 
+02a11496 8bd0            mov     edx,eax 
+02a11498 8bce            mov     ecx,esi 
+02a1149a 8b01            mov     eax,dword ptr [ecx] 
+02a1149c 8b4028          mov     eax,dword ptr [eax+28h] 
+02a1149f ff5010          call    dword ptr [eax+10h] 
+02a114a2 5e              pop     esi 
+02a114a3 5d              pop     ebp 
+02a114a4 c3              ret 
+02a114a5 0000            add     byte ptr [eax],al 
+02a114a7 0000            add     byte ptr [eax],al 
+02a114a9 0000            add     byte ptr [eax],al 
+02a114ab 0000            add     byte ptr [eax],al 
+02a114ad 0000            add     byte ptr [eax],al 
+02a114af 003cbf          add     byte ptr [edi+edi*4],bh 
+02a114b2 a002000000      mov     al,byte ptr ds:[00000002h] 
+02a114b7 0034bf          add     byte ptr [edi+edi*4],dh 
+02a114ba a002dcad9f      mov     al,byte ptr ds:[9FADDC02h] 
+02a114bf 028bc28b5104    add     cl,byte ptr [ebx+4518BC2h] 
+
+Method got inlined
+DisDemo.Jit_Devirtualization+Operation.OperateTwice(Int32)
+
+Abstract method
+DisDemo.Jit_Devirtualization+Operation.Operate(Int32)
+
+</code></pre></td>
+<td style="vertical-align:top;"><pre><code>
+7FFC9D2D8FC0 DisDemo.Jit_Devirtualization.CallVirtualMethod()
+00007ffc`9d2d8fc0 56              push    rsi 
+00007ffc`9d2d8fc1 4883ec20        sub     rsp,20h 
+00007ffc`9d2d8fc5 488b7108        mov     rsi,qword ptr [rcx+8] 
+00007ffc`9d2d8fc9 488bce          mov     rcx,rsi 
+00007ffc`9d2d8fcc ba0a000000      mov     edx,0Ah 
+00007ffc`9d2d8fd1 488b06          mov     rax,qword ptr [rsi] 
+00007ffc`9d2d8fd4 488b4040        mov     rax,qword ptr [rax+40h] 
+00007ffc`9d2d8fd8 ff5020          call    qword ptr [rax+20h] 
+00007ffc`9d2d8fdb 8bd0            mov     edx,eax 
+00007ffc`9d2d8fdd 488bce          mov     rcx,rsi 
+00007ffc`9d2d8fe0 488b06          mov     rax,qword ptr [rsi] 
+00007ffc`9d2d8fe3 488b4040        mov     rax,qword ptr [rax+40h] 
+00007ffc`9d2d8fe7 ff5020          call    qword ptr [rax+20h] 
+00007ffc`9d2d8fea 90              nop 
+00007ffc`9d2d8feb 4883c420        add     rsp,20h 
+00007ffc`9d2d8fef 5e              pop     rsi 
+00007ffc`9d2d8ff0 c3              ret 
+00007ffc`9d2d8ff1 0000            add     byte ptr [rax],al 
+00007ffc`9d2d8ff3 0019            add     byte ptr [rcx],bl 
+00007ffc`9d2d8ff5 0502000532      add     eax,32050002h 
+00007ffc`9d2d8ffa 01603e          add     dword ptr [rax+3Eh],esp 
+00007ffc`9d2d8ffd 0000            add     byte ptr [rax],al 
+00007ffc`9d2d8fff 0000            add     byte ptr [rax],al 
+00007ffc`9d2d9001 0000            add     byte ptr [rax],al 
+00007ffc`9d2d9003 0000            add     byte ptr [rax],al 
+00007ffc`9d2d9005 0000            add     byte ptr [rax],al 
+00007ffc`9d2d9007 005046          add     byte ptr [rax+46h],dl 
+
+Method got inlined
+DisDemo.Jit_Devirtualization+Operation.OperateTwice(Int32)
+
+Abstract method
+DisDemo.Jit_Devirtualization+Operation.Operate(Int32)
+
+</code></pre></td>
+<td style="vertical-align:top;"><pre><code>
+7FFC516A4300 DisDemo.Jit_Devirtualization.CallVirtualMethod()
+00007ffc`516a4300 56              push    rsi 
+00007ffc`516a4301 4883ec20        sub     rsp,20h 
+00007ffc`516a4305 488b7108        mov     rsi,qword ptr [rcx+8] 
+00007ffc`516a4309 488bce          mov     rcx,rsi 
+00007ffc`516a430c ba0a000000      mov     edx,0Ah 
+00007ffc`516a4311 488b06          mov     rax,qword ptr [rsi] 
+00007ffc`516a4314 488b4040        mov     rax,qword ptr [rax+40h] 
+00007ffc`516a4318 ff5020          call    qword ptr [rax+20h] 
+00007ffc`516a431b 8bd0            mov     edx,eax 
+00007ffc`516a431d 488bce          mov     rcx,rsi 
+00007ffc`516a4320 488b06          mov     rax,qword ptr [rsi] 
+00007ffc`516a4323 488b4040        mov     rax,qword ptr [rax+40h] 
+00007ffc`516a4327 ff5020          call    qword ptr [rax+20h] 
+00007ffc`516a432a 90              nop 
+00007ffc`516a432b 4883c420        add     rsp,20h 
+00007ffc`516a432f 5e              pop     rsi 
+00007ffc`516a4330 c3              ret 
+00007ffc`516a4331 0000            add     byte ptr [rax],al 
+00007ffc`516a4333 0019            add     byte ptr [rcx],bl 
+00007ffc`516a4335 0502000532      add     eax,32050002h 
+00007ffc`516a433a 01603e          add     dword ptr [rax+3Eh],esp 
+00007ffc`516a433d 0000            add     byte ptr [rax],al 
+00007ffc`516a433f 0000            add     byte ptr [rax],al 
+00007ffc`516a4341 0000            add     byte ptr [rax],al 
+00007ffc`516a4343 0000            add     byte ptr [rax],al 
+00007ffc`516a4345 0000            add     byte ptr [rax],al 
+00007ffc`516a4347 00f8            add     al,bh 
+00007ffc`516a4349 d87651          fdiv    dword ptr [rsi+51h] 
+
+Method got inlined
+DisDemo.Jit_Devirtualization+Operation.OperateTwice(Int32)
+
+Abstract method
+DisDemo.Jit_Devirtualization+Operation.Operate(Int32)
+
+</code></pre></td>
+<td style="vertical-align:top;"><pre><code>
+7FFC56B9E330 DisDemo.Jit_Devirtualization.CallVirtualMethod()
+00007ffc`56b9e330 56              push    rsi 
+00007ffc`56b9e331 4883ec20        sub     rsp,20h 
+00007ffc`56b9e335 488b7108        mov     rsi,qword ptr [rcx+8] 
+00007ffc`56b9e339 488bce          mov     rcx,rsi 
+00007ffc`56b9e33c ba0a000000      mov     edx,0Ah 
+00007ffc`56b9e341 488b06          mov     rax,qword ptr [rsi] 
+00007ffc`56b9e344 488b4040        mov     rax,qword ptr [rax+40h] 
+00007ffc`56b9e348 ff5020          call    qword ptr [rax+20h] 
+00007ffc`56b9e34b 8bd0            mov     edx,eax 
+00007ffc`56b9e34d 488bce          mov     rcx,rsi 
+00007ffc`56b9e350 488b06          mov     rax,qword ptr [rsi] 
+00007ffc`56b9e353 488b4040        mov     rax,qword ptr [rax+40h] 
+00007ffc`56b9e357 488b4020        mov     rax,qword ptr [rax+20h] 
+00007ffc`56b9e35b 4883c420        add     rsp,20h 
+00007ffc`56b9e35f 5e              pop     rsi 
+00007ffc`56b9e360 48ffe0          jmp     rax 
+00007ffc`56b9e363 0019            add     byte ptr [rcx],bl 
+00007ffc`56b9e365 0502000532      add     eax,32050002h 
+00007ffc`56b9e36a 01603e          add     dword ptr [rax+3Eh],esp 
+00007ffc`56b9e36d 0000            add     byte ptr [rax],al 
+00007ffc`56b9e36f 0000            add     byte ptr [rax],al 
+00007ffc`56b9e371 0000            add     byte ptr [rax],al 
+00007ffc`56b9e373 0000            add     byte ptr [rax],al 
+00007ffc`56b9e375 0000            add     byte ptr [rax],al 
+00007ffc`56b9e377 0008            add     byte ptr [rax],cl 
+00007ffc`56b9e379 35c756fc7f      xor     eax,7FFC56C7h 
+
+Method got inlined
+DisDemo.Jit_Devirtualization+Operation.OperateTwice(Int32)
+
+Abstract method
+DisDemo.Jit_Devirtualization+Operation.Operate(Int32)
+
+</code></pre></td>
+<td style="vertical-align:top;"><pre><code>
+0 CallVirtualMethod
+load_membase %rax <- [%rbp + 0xfffffff8] 
+load_membase %rax <- [%rax + 0x10] 
+move %rcx <- %rax 
+iconst %rdx <- [10] 
+checkthis [%rax + 0x0] 
+not_null %rax 
+call %rax <- [DisDemo.Jit_Devirtualization/Operation:OperateTwice (int)] [%rcx <- R29] [%rdx <- R30] clobbers: c 
+
+</code></pre></td>
+<td style="vertical-align:top;"><pre><code>
+0 CallVirtualMethod
+load_membase %eax <- [%ebp + 0x8] 
+load_membase %eax <- [%eax + 0x8] 
+store_membase_imm [%esp + 0x4] <- [10] 
+store_membase_reg [%esp] <- %eax 
+checkthis [%eax + 0x0] 
+not_null %eax 
+call %eax <- [DisDemo.Jit_Devirtualization/Operation:OperateTwice (int)] clobbers: c 
+
+</code></pre></td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>
