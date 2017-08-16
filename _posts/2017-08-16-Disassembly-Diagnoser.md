@@ -91,7 +91,7 @@ I have almost forgotten that Matt Warren did something [very similar](https://gi
 
 # How it works?
 
-As some of you might know in BenchmarkDotNet we have the host process (what you run in the console) and child process, which executes the benchmark and reports results back to the host. The child process is generated, compiled and executed by the host. With such architecture we can benchmark given .NET code for any config desired by the user (any JIT, any .NET framework, any GC configuration). Last but not least it helps to make the results more stable. GC is self tuning and JIT can make some extra optimizations, but with process per benchmark you always get clean score.
+As some of you might know in BenchmarkDotNet we have the host process (what you run in the console) and child process, which executes the benchmark and reports results back to the host. The child process is generated, compiled and executed by the host. With such architecture, we can benchmark given .NET code for any config desired by the user (any JIT, any .NET framework, any GC configuration). Last but not least it helps to make the results more stable. GC is self-tuning and JIT can make some extra optimizations, but with process per benchmark, you always get the clean score.
 
 ## Desktop .NET
 
@@ -101,7 +101,7 @@ ClrMD can attach to the process of the same bitness. To support all scenarios (h
 
 ## .NET Core
 
-The NuGet package of [ClrMD](https://www.nuget.org/packages/Microsoft.Diagnostics.Runtime/) implements .NET Core support, but targets only desktop .NET. It's not a problem, because we can use our architecture to get it running for .NET Core. If host is a desktop .NET process it can use ClrMD to attach to the child .NET Core process.
+The NuGet package of [ClrMD](https://www.nuget.org/packages/Microsoft.Diagnostics.Runtime/) implements .NET Core support, but targets only desktop .NET. It's not a problem because we can use our architecture to get it running for .NET Core. If host is a desktop .NET process it can use ClrMD to attach to the child .NET Core process.
 
 This is why if you want to get it running for .NET Core you have to target both classic .NET and .NET Core frameworks.
 
@@ -135,7 +135,7 @@ dotnet run -f net46 -c Release
 
 ## Mono
 
-With great help from Miguel de Icaza I was able to implement a simple disassembler for Mono. We just run:
+With great help from Miguel de Icaza, I was able to implement a simple disassembler for Mono. We just run:
 
 ```
 mono -v -v -v -v --compile $namespace.$typeName:$methodName $exeName
@@ -156,7 +156,6 @@ What we have today comes with following limitations:
 <DebugType>pdbonly</DebugType>
 <DebugSymbols>true</DebugSymbols>
 ```
-
 
 # How to use it?
 
@@ -183,6 +182,20 @@ private class CustomConfig : ManualConfig
     }
 }
 ```
+
+## Recursive mode
+
+The new diagnoser supports recursive disassembling. It means that you can configure it to disassemble the benchmark itself and optionally the code that it calls. To do so you need to use the `recursiveDepth` parameter. Be careful with setting it to `int.MaxValue`.  If you are curious, please try it for following benchmark:
+
+```cs
+public void Big()
+{
+   if(new Random(123).Next(5, 10) > 11)
+       throw new InvalidOperationException("Impossible");
+}
+```
+
+Spoiler: it produces a 50 MB file ;)
 
 ## Single config for ALL JITs
 
@@ -269,7 +282,7 @@ LaunchCount=1  TargetCount=3  WarmupCount=3
 
 </div>
 
-The disassembly result can be obtained [here](http://adamsitnik.com/files/disasm/Jit_Devirtualization-disassembly-report.html). The file was too big to put it here.
+The disassembly result can be obtained [here](http://adamsitnik.com/files/disasm/Jit_Devirtualization-disassembly-report.html). The file was too big to embed it in this blog post.
 
 # The Ultimate Combination
 
@@ -352,4 +365,4 @@ The other diagnoser is [using ETW](http://adamsitnik.com/Hardware-Counters-ETW/)
 
 When we detect that user is using both diagnosers we enable [Instruction Pointer exporter](https://github.com/dotnet/BenchmarkDotNet/blob/master/src/BenchmarkDotNet.Core/Exporters/InstructionPointerExporter.cs). It eliminates the noise (events with IPs that don't belong to the benchmarked code like BenchmarkDotNet engine) and aggregates the results.
 
-Please keep in mind that we only show what we get. Most of the PMC events are delayed. I will try to post an update about this soon. 
+Please keep in mind that we just show what we get. The PMC events might be delayed. They are collected in Event-Based Sampling (EBS) mode. When the event occurs, the counter increments and when it reaches the max interval value the event is fired with current Instruction Pointer. We try to overcome the side effects of this by running a lot of iterations of the benchmarked code.
