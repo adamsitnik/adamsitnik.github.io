@@ -97,41 +97,13 @@ As some of you might know in BenchmarkDotNet we have the host process (what you 
 
 Based on the idea from msos the host is using ClrMD to attach to the child process. ClrMD allows us to get the text representation of assembly code. To get the IL we use the one and only Mono.Cecil. To get the corresponding C# code we once again use ClrMD.
 
-ClrMD can attach to the process of the same bitness. To support all scenarios (host 32bit, child 64bit and the opposite) I have put the disassembler to a separate process. This is why we have `BenchmarkDotNet.Disassembler.x86.exe` and `BenchmarkDotNet.Disassembler.x64.exe`. Both disassemblers are stored in the resources of the `BenchmarkDotNet.Diagnostics.Windows.dll`. When the time comes, they are copied from resources to the hard drive and executed accordingly.
+ClrMD can attach to the process of the same bitness. To support all scenarios (host 32bit, child 64bit and the opposite) I have put the disassembler to a separate process. This is why we have `BenchmarkDotNet.Disassembler.x86.exe` and `BenchmarkDotNet.Disassembler.x64.exe`. Both disassemblers are stored in the resources of the `BenchmarkDotNet.Core.dll`. When the time comes, they are copied from resources to the hard drive and executed accordingly.
 
 ## .NET Core
 
-The NuGet package of [ClrMD](https://www.nuget.org/packages/Microsoft.Diagnostics.Runtime/) implements .NET Core support, but targets only desktop .NET. It's not a problem because we can use our architecture to get it running for .NET Core. If host is a desktop .NET process it can use ClrMD to attach to the child .NET Core process.
+The NuGet package of [ClrMD](https://www.nuget.org/packages/Microsoft.Diagnostics.Runtime/) implements .NET Core support but targets only desktop .NET. It's not a problem because we can use our architecture to get it running for .NET Core. Whatever the host is (.NET or .NET Core) it spawns the disassembler process (a desktop .NET process) which uses ClrMD to attach to the child .NET Core process.
 
-This is why if you want to get it running for .NET Core you have to target both classic .NET and .NET Core frameworks.
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp1.1;net46</TargetFrameworks>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.9.281" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.10.9.281" />
-  </ItemGroup>
-</Project>
-```
-
-```cs
-[DisassemblyDiagnoser] // !!! use the new diagnoser!!
-[CoreJob] // tell the Host to run the benchmarks for .NET Core
-public class TheClassThatContainsBenchmarks { }
-```
-
-And run the host as desktop .NET:
-
-```
-dotnet run -f net46 -c Release
-```
+This is why we currently support only Windows for our .NET Core disassembler.
 
 ## Mono
 
@@ -159,7 +131,7 @@ What we have today comes with following limitations:
 
 # How to use it?
 
-You need to install `BenchmarkDotNet.Diagnostics.Windows` package. The official 0.10.10 version should be released to nuget.org very soon. As of today you can get the latest version from our CI feed by adding following line `<add key="appveyor-bdn" value="https://ci.appveyor.com/nuget/benchmarkdotnet" />` to your `NuGet.config` file. 
+You just need to install `BenchmarkDotNet` package (initially it was part of `BenchmarkDotNet.Diagnostics.Windows`). The official 0.10.10 version should be released to nuget.org very soon. As of today you can get the latest version from our CI feed by adding following line `<add key="appveyor-bdn" value="https://ci.appveyor.com/nuget/benchmarkdotnet" />` to your `NuGet.config` file. 
 
 It can be enabled in two ways:
 
@@ -365,4 +337,15 @@ The other diagnoser is [using ETW](http://adamsitnik.com/Hardware-Counters-ETW/)
 
 When we detect that user is using both diagnosers we enable [Instruction Pointer exporter](https://github.com/dotnet/BenchmarkDotNet/blob/master/src/BenchmarkDotNet.Core/Exporters/InstructionPointerExporter.cs). It eliminates the noise (events with IPs that don't belong to the benchmarked code like BenchmarkDotNet engine) and aggregates the results.
 
-Please keep in mind that we just show what we get. The PMC events might be delayed. They are collected in Event-Based Sampling (EBS) mode. When the event occurs, the counter increments and when it reaches the max interval value the event is fired with current Instruction Pointer. We try to overcome the side effects of this by running a lot of iterations of the benchmarked code.
+## Skid
+
+Please keep in mind that we just show what we get. The PMC events are usually delayed. They are collected in Event-Based Sampling (EBS) mode. When the event occurs, the counter increments and when it reaches the max interval value the event is fired with current Instruction Pointer ([good explanation](http://openlab.web.cern.ch/sites/openlab.web.cern.ch/files/technical_documents/TheOverheadOfProfilingUsingPMUhardwareCounters.pdf)). We try to overcome the side effects of this by running a lot of iterations of the benchmarked code. If your processor support PEBS it should also help.
+
+{: .center}
+![Skid](/images/disasm/hardwareCounters_skid.png)
+
+As you can see instructions without branches report branching events. I used arrows to show the real instructions for each branch.
+
+If you are interested to learn more about skid testing I encourage you to try simple but very smart "[Processor PMC event skid testing](https://github.com/brendangregg/skid-testing)" by Brendan Gregg. In his case it was over 99% skids.
+
+
