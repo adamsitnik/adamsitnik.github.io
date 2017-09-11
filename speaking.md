@@ -13,6 +13,7 @@ permalink: /speaking/
 	- .NET TechTalks MeetUp, Prague, Czech Republic (19.07.2017) ([slides](http://adamsitnik.com/files/Prague.pdf), [event](https://www.wug.cz/praha/akce/951--Net-TechTalks))
 * My awesome journey with Open Source ([slides](http://adamsitnik.com/files/MyAwesomeJourneyWithOpenSource.pdf))
 	- Programistok Conference, Białystok, Poland (**07.10.2017**) ([website](http://programistok.org/#agenda))
+	- Norwegian IT Night 3city Conference, Sopot, Poland (**04.10.2017**) ([website](https://norwegian-it-night-tricity.confetti.events/))
 	- DotNext conference, St. Petersburg, Russia (19-20.05.2017) ([website](https://dotnext-piter.ru/talks/my-awesome-journey-with-open-source/))
 	- Local .NET User Group, Warsaw, Poland (20.04.2017) ([event](https://www.meetup.com/WG-NET/events/239152568))
 	- Local .NET User Group, Wrocław, Poland (18.04.2017) ([event](https://www.meetup.com/wrocnet/events/239015139/))
@@ -22,6 +23,7 @@ permalink: /speaking/
 	- Local .NET User Group, Warsaw, Poland (17.11.2016) ([event](https://www.meetup.com/WG-NET/events/235483282/))
 	- Local .NET User Group, Gdańsk, Poland (13.10.2016) ([event](https://www.meetup.com/TG-NET/events/234690407/))
 * State of the .NET Performance
+	- .NET Summit, Minsk, Belarus (**23.09.2017**) ([website](https://dotnetsummit.by/))
 	- ADC .NET Core Conf, Cologne, Germany (**19.09.2017**) ([website](http://adc.ms/2017/sprecher))
 	- 4 Developers Conference, Gdańsk, Poland (**18.09.2017**) ([website](https://gdansk.4developers.org.pl/index.html))
 	- NDC conference, Oslo, Norway (15.06.2017) ([slides](http://adamsitnik.com/files/NDC2017.pdf), [benchmarks](https://github.com/adamsitnik/StateOfTheDotNetPerformance), [website](http://ndcoslo.com/talk/state-of-the-net-performance/))
