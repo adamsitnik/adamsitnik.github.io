@@ -151,7 +151,7 @@ public class DataLocality
 
 ### The Results
 
-``` ini
+```
 BenchmarkDotNet=v0.10.8, OS=Windows 8.1 (6.3.9600)
 Processor=Intel Core i7-4700MQ CPU 2.40GHz (Haswell), ProcessorCount=8
 Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
@@ -161,6 +161,7 @@ Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
 
 Runtime=Clr  
 ```
+<div class="scrollable-table-wrapper" markdown="block">
 
  |                Method |       Jit | Platform |     Count |              Mean | Scaled | CacheMisses/Op |
  |---------------------- |---------- |--------- |---------- |------------------:|-------:|---------------:|
@@ -169,18 +170,20 @@ Runtime=Clr
  |     IterateValueTypes |    RyuJit |      X64 |       100 |          76.56 ns |   1.00 |              **0** |
  | IterateReferenceTypes |    RyuJit |      X64 |       100 |         252.23 ns |   **3.29** |              **0** |
 
+</div>
 As you can see the difference (Scaled column) is really significant! 
 
 But the `CacheMisses/Op` column is empty?!? What does it mean? In this case, it means that I run too few loop iterations (just 100). 
 
 An explanation for the curious: BenchmarkDotNet is using [ETW](http://adamsitnik.com/Hardware-Counters-ETW/) to collect hardware counters. ETW is simply exposing what the hardware has to offer. Each Performance Monitoring Units (PMU) register is configured to count a specific event and given a sample-after value (SAV). For my PC the minimum Cache Miss HC sampling interval is 4000. In value type benchmark I should get Cache Miss once every 8 loop iterations (`cacheLineSize / sizeOf(ValueTuple<int, int>) = 64 / 8 = 8`). I have 100 iterations here, so it should be 12 Cache Misses for Benchmark. But the PMU will notify ETW, which will notify BenchmarkDotNet every 4 000 events. So once every 333 (`4 000 / 12`) benchmark invocation. BenchmarkDotNet implements a heuristic which decides how many times the benchmarked method should be invoked. It this example the method was executed too few times to capture enough of events. **So if you want to capture some hardware counters with BenchmarkDotNet you need to perform plenty of iterations!** For more info about PMU you can refer to [this article](https://software.intel.com/en-us/articles/understanding-how-general-exploration-works-in-intel-vtune-amplifier-xe) by Jackson Marusarz (Intel).
+<div class="scrollable-table-wrapper" markdown="block">
 
  |                Method |       Jit | Platform |       Count |              Mean | Scaled | CacheMisses/Op |
  |---------------------- |---------- |--------- |------------ |------------------:|-------:|---------------:|
  |     IterateValueTypes |    RyuJit |      X64 | 100 000 000 |  88,735,182.11 ns |   1.00 |        **3545088** |
  | IterateReferenceTypes |    RyuJit |      X64 | 100 000 000 | 280,721,189.70 ns |   **3.16** |        **8456940** |
 
-
+</div>
 The more loop iterations (Count column), the more Cache Misses events we get. **For the iteration of reference types cache misses were 2.38 times more common** (8456940 / 3545088).
 
 **Note:** Accuracy of Hardware Counters diagnoser in BenchmarkDotNet is limited by sampling frequency and additional code performed in the benchmarked process by our Engine. It's good but not perfect. For more accurate results you should use some profilers like Intel VTune Amplifier.
@@ -237,7 +240,7 @@ public class AllocationsConfig : ManualConfig
 
 If you are not familiar with the output produced by BenchmarkDotNet with Memory Diagnoser enabled, you can read my [dedicated blog post](http://adamsitnik.com/the-new-Memory-Diagnoser/#how-to-read-the-results) to find out how to read these results.
 
-``` ini
+```
 BenchmarkDotNet=v0.10.8, OS=Windows 8.1 (6.3.9600)
 Processor=Intel Core i7-4700MQ CPU 2.40GHz (Haswell), ProcessorCount=8
 Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
@@ -247,6 +250,7 @@ Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
 
 Runtime=Clr  Force=False  InvocationCount=1048576  
 ```
+<div class="scrollable-table-wrapper" markdown="block">
 
  |           Method |       Jit | Platform |  Gen 0 | Allocated |
  |----------------- |---------- |--------- |-------:|----------:|
@@ -255,6 +259,7 @@ Runtime=Clr  Force=False  InvocationCount=1048576
  | CreateValueTuple |    RyuJit |      X64 |      **-** |       **0 B** |
  |      CreateTuple |    RyuJit |      X64 | **0.0076** |      **24 B** |
 
+</div>
  As you can see, creating Value Types means No GC (`-` in Gen 0 column).
 
  **Note:** If value type contains reference types GC will emit write barriers for write access to the reference fields. So No GC is not 100% true for value types that contain references.
@@ -316,7 +321,7 @@ public class ValueTypeInvokingInterfaceMethod
 }
 ```
 
-``` ini
+```
 BenchmarkDotNet=v0.10.8, OS=Windows 8.1 (6.3.9600)
 Processor=Intel Core i7-4700MQ CPU 2.40GHz (Haswell), ProcessorCount=8
 Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
@@ -326,6 +331,7 @@ Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
 
 Runtime=Clr  
 ```
+<div class="scrollable-table-wrapper" markdown="block">
 
  |        Method |       Jit | Platform |     Mean | Scaled |  Gen 0 | Allocated |
  |-------------- |---------- |--------- |---------:|-------:|-------:|----------:|
@@ -334,15 +340,16 @@ Runtime=Clr
  |     ValueType |    RyuJit |      X64 | 5.754 ns |   1.00 | **0.0076** |      **24 B** |
  | ReferenceType |    RyuJit |      X64 | 1.845 ns |   **0.32** |      - |       0 B |
 
+</div>
 Once again we got into boxing. Did you expect it?!
 
 ### How to avoid boxing with value types that implement interfaces?
 
-We can tell the C# compiler, that given generic method accepts an instance of value type that implements given interface.
+We need to use generic constraints. The method should not accept `IInterface` but `T` which implements `IInterface`.
 
 ```cs
 void Trick<T>(T instance)
-    where T : struct, IInterface
+    where T : IInterface
 {
     instance.Method();
 }
@@ -369,11 +376,11 @@ public class ValueTypeInvokingInterfaceMethodSmart
     [Benchmark(OperationsPerInvoke = 16)]
     public void ValueTypeSmart()
     {
-        AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value);
-        AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value);
-        AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value);
-        AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value);
-        AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value); AcceptingStructThatImplementsInterface(value);
+        AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value);
+        AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value);
+        AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value);
+        AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value);
+        AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value); AcceptingSomethingThatImplementsInterface(value);
     }
 
     [Benchmark(OperationsPerInvoke = 16)]
@@ -387,8 +394,8 @@ public class ValueTypeInvokingInterfaceMethodSmart
 
     void AcceptingInterface(IInterface instance) => instance.DoNothing();
 
-    void AcceptingStructThatImplementsInterface<T>(T instance)
-        where T : struct, IInterface
+    void AcceptingSomethingThatImplementsInterface<T>(T instance)
+        where T : IInterface
     {
         instance.DoNothing();
     }
@@ -397,7 +404,7 @@ public class ValueTypeInvokingInterfaceMethodSmart
 
 **Note:** I have used `OperationsPerInvoke` feature of BenchmarkDotNet which is very usefull for nano-benchmarks.
 
-``` ini
+```
 BenchmarkDotNet=v0.10.8, OS=Windows 8.1 (6.3.9600)
 Processor=Intel Core i7-4700MQ CPU 2.40GHz (Haswell), ProcessorCount=8
 Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
@@ -406,6 +413,7 @@ Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
 
 Job=RyuJitX64  Jit=RyuJit  Platform=X64  
 ```
+<div class="scrollable-table-wrapper" markdown="block">
 
  |         Method |     Mean |     Error |    StdDev | Scaled |  Gen 0 | Allocated |
  |--------------- |---------:|----------:|----------:|-------:|-------:|----------:|
@@ -413,21 +421,24 @@ Job=RyuJitX64  Jit=RyuJit  Platform=X64
  | ValueTypeSmart | **1.145 ns** | 0.0101 ns | 0.0094 ns |   **0.21** |      - |       **0 B** |
  |  ReferenceType | **2.212 ns** | 0.0096 ns | 0.0081 ns |   **0.40** |      - |       0 B |
 
+</div>
  By applying this simple trick we were able to not only avoid boxing but also outperform reference type interface method invocation! It was possible due to the optimization performed by JIT. I am going to call it method de-virtualization because I don't have a better name for it. How does it work? Let's consider following example:
+ 
+ **Note:** Previous version of this blog post had a bug, which was spotted by Fons Sonnemans. There is no need for extra `struct` constraint to avoid boxing. Thank you Fons!
  
  ```cs
  public void Method<T>(T instance)
-        where T : struct, IDisposable
+        where T : IDisposable
 {
         instance.Dispose();
 }
 ```
  
- When the `T` is constrained with `where T : struct, INameOfTheInterface`, the C# compiler emits additional `IL` instruction called `constrained` ([Docs](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx)).
+ When the `T` is constrained with `where T : INameOfTheInterface`, the C# compiler emits additional `IL` instruction called `constrained` ([Docs](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx)).
  
  ```cs
  .method public hidebysig 
-    instance void Method<valuetype .ctor ([mscorlib]System.IDisposable, [mscorlib]System.ValueType) T> (
+    instance void Method<([mscorlib]System.IDisposable) T> (
         !!T 'instance'
     ) cil managed 
 {
@@ -440,8 +451,8 @@ Job=RyuJitX64  Jit=RyuJit  Platform=X64
 } // end of method C::Method
 ```
 
-If there is no constraint the instance can be anything: value or reference type. In case it's value type, the JIT performs boxing.
-This generic constraint is a clear signal for JIT that `T` is a value type, so it can avoid boxing.
+If the method is not generic, there is no constraint and the instance can be anything: value or reference type. In case it's value type, the JIT performs boxing.
+When the method is generic, JIT compiles a separate version of it per every value type. Which prevents boxing! How does it work?
 
 JIT handles value types in a different way than reference types. Operations, like passing to a method or returning from it are the same for all reference types. We always deal with pointers, which have single, same size for all reference types. So JIT is reusing the compiled generic code for reference types because it can treat them in the same way. Imagine an array of `objects` or `strings`. From JITs perspective, it is just an array of pointers. So the array's indexer implementation will be the same for all reference types.
 
@@ -460,6 +471,26 @@ Method<DateTime>(); // dedicated version for DateTime
 It might lead to [generic Code Bloat](https://blogs.msdn.microsoft.com/carlos/2009/11/09/net-generics-and-code-bloat-or-its-lack-thereof/). But the great thing is that at this point in time, JIT can compile **tailored** code per type. And since the type is know, it can **replace virtual call with direct call**. As [Victor Baybekov](https://twitter.com/buybackoff) mentioned in the comments, it can even remove the unnecessary null check for the call. It's value type, so it can not be null. Inlining is also possible. 
 For small methods, which are executed very often, like `.Equals()` in [custom Dictionary implementation](https://github.com/Spreads/Spreads.Unsafe#fastdictionary) it can be very big performance gain.
 
+We can see the effect of inlining if we run the same benchmarks for .NET 4.7, where RyuJit got improved and inlines all calls to `AcceptingSomethingThatImplementsInterface`.
+
+```
+BenchmarkDotNet=v0.10.9.313-nightly, OS=Windows 8.1 (6.3.9600)
+Processor=Intel Core i7-4700MQ CPU 2.40GHz (Haswell), ProcessorCount=8
+Frequency=2338348 Hz, Resolution=427.6523 ns, Timer=TSC
+  [Host]       : .NET Framework 4.6.1 (CLR 4.0.30319.42000), 32bit LegacyJIT-v4.7.2106.0
+  LegacyJitX64 : .NET Framework 4.6.1 (CLR 4.0.30319.42000), 64bit LegacyJIT/clrjit-v4.7.2106.0;compatjit-v4.7.2106.0
+  LegacyJitX86 : .NET Framework 4.6.1 (CLR 4.0.30319.42000), 32bit LegacyJIT-v4.7.2106.0
+  RyuJitX64    : .NET Framework 4.6.1 (CLR 4.0.30319.42000), 64bit RyuJIT-v4.7.2106.0
+```
+<div class="scrollable-table-wrapper" markdown="block">
+
+ |          Method |          Job |       Jit | Platform |      Mean |     Error |    StdDev |
+ |---------------- |------------- |---------- |--------- |----------:|----------:|----------:|
+ |  ValueTypeSmart | LegacyJitX64 | LegacyJit |      X64 | 1.2906 ns | 0.0217 ns | 0.0182 ns |
+ |  ValueTypeSmart | LegacyJitX86 | LegacyJit |      X86 | 0.3367 ns | 0.0064 ns | 0.0060 ns |
+ |  ValueTypeSmart |    RyuJitX64 |    RyuJit |      X64 | 0.0004 ns | 0.0006 ns | 0.0005 ns |
+
+</div>
 **Note:** If you would like to play with generated IL code you can use the awesome [SharpLab](https://sharplab.io/#v2:C4LglgNgNAJiDUAfAAgBgATIIwG4CwAUMgMyYBM6AwugN6HoOanIAs6AsgKbAAWA9jAA8AFQB8ACmHowAOwDOwAIYyAxpwCU9RtoDuPTgCdO6KSHQKDAVxXAo6AJIARMHIAOfOYoBGETloZ0BNrBjLIKymoAdM5uHpzi6vhBjAC+hClAA===).
 
 ## Copying
@@ -510,7 +541,7 @@ public class CopyingValueTypes
 
 The rest of the code was removed for brevity. You can find full code [here](https://gist.github.com/adamsitnik/5c1b36c75c94c3ab819de47b5addf3bc).
 
-``` ini
+```
 BenchmarkDotNet=v0.10.8, OS=Windows 8.1 (6.3.9600)
 Processor=Intel Core i7-4700MQ CPU 2.40GHz (Haswell), ProcessorCount=8
 Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
@@ -520,6 +551,8 @@ Frequency=2338337 Hz, Resolution=427.6544 ns, Timer=TSC
 
 Runtime=Clr  
 ```
+<div class="scrollable-table-wrapper" markdown="block">
+
 
  |                   Method |       Jit | Platform |     Mean |
  |------------------------- |---------- |--------- |---------:|
@@ -530,7 +563,10 @@ Runtime=Clr
  | TestReferenceType2Fields |    RyuJit |      X64 | 1.770 ns |
  | TestReferenceType3Fields |    RyuJit |      X64 | 1.711 ns |
 
+</div>
  Passing and returning Reference Types is size-independent. Only a copy of the pointer is passed. And pointer can always fit into CPU register.
+```
+<div class="scrollable-table-wrapper" markdown="block">
 
  |                   Method |       Jit | Platform |     Mean |
  |------------------------- |---------- |--------- |---------:|
@@ -541,6 +577,7 @@ Runtime=Clr
  |     TestValueType2Fields |    RyuJit |      X64 | 8.403 ns |
  |     TestValueType3Fields |    RyuJit |      X64 | 2.627 ns |
 
+</div>
  The bigger the Value Type is, the more expensive copying is. 
  Have you noticed that `TestValueType3Fields` was faster than `TestValueType2Fields` for `RyuJit`? To answer the question why we would need to analyse the generated native assembly code.
 
