@@ -6,7 +6,7 @@ excerpt_separator: <!--more-->
 
 # Disassembly Diagnoser
 
-Disassembly Diagnoser is the new diagnoser for BenchmarkDotNet that I have just finished. It's in preview now, going to be released as part of `0.10.10`. It allows to disassemble the benchmarked .NET code:
+Disassembly Diagnoser is the new diagnoser for BenchmarkDotNet that I have just finished. It's was released as part of `0.10.10`. It allows to disassemble the benchmarked .NET code:
 
 * to ASM:
 	* desktop .NET: LegacyJit (32 & 64 bit), RyuJIT (64 bit)
@@ -122,6 +122,7 @@ What we have today comes with following limitations:
 * .NET Core disassembler works only on Windows
 * Mono disassembler does not support recursive disassembling and produces output without IL and C#.
 * Indirect calls are not tracked.
+* To be able to compare different platforms, you need to target AnyCPU `<PlatformTarget>AnyCPU</PlatformTarget>`
 * To get the corresponding C#/F# code from disassembler you need to configure your project in following way:
 
 ```xml
@@ -131,9 +132,19 @@ What we have today comes with following limitations:
 
 # How to use it?
 
-You just need to install `BenchmarkDotNet` package (initially it was part of `BenchmarkDotNet.Diagnostics.Windows`). The official 0.10.10 version should be released to nuget.org very soon. As of today you can get the latest version from our CI feed by adding following line `<add key="appveyor-bdn" value="https://ci.appveyor.com/nuget/benchmarkdotnet" />` to your `NuGet.config` file. 
+The first step is to install `BenchmarkDotNet` version `0.10.10` or newer (always use latest BenchmarkDotNet for your own good!). 
 
-It can be enabled in two ways:
+After this you need to apply following settings to your `.csproj` file:
+
+```xml
+<PropertyGroup>
+  <PlatformTarget>AnyCPU</PlatformTarget>
+  <DebugType>pdbonly</DebugType>
+  <DebugSymbols>true</DebugSymbols>
+</PropertyGroup>
+```
+
+Now you can enable it in two ways:
 
 * Use the new attribute (apply it on a class that contains Benchmarks):
 
@@ -172,6 +183,14 @@ Spoiler: it produces a 50 MB file ;)
 ## Single config for ALL JITs
 
 You can use a single config to compare the generated assembly code for ALL JITs. 
+
+But to allow benchmarking any target platform architecture the project which defines benchmarks has to target **AnyCPU**. 
+
+```xml
+<PropertyGroup>
+  <PlatformTarget>AnyCPU</PlatformTarget>
+</PropertyGroup>
+```
 
 Let's check the Devirtualization that was [introduced recently](https://blogs.msdn.microsoft.com/dotnet/2017/06/29/performance-improvements-in-ryujit-in-net-core-and-net-framework/) for .NET Core 2.0:
 
@@ -255,6 +274,23 @@ LaunchCount=1  TargetCount=3  WarmupCount=3
 </div>
 
 The disassembly result can be obtained [here](http://adamsitnik.com/files/disasm/Jit_Devirtualization-disassembly-report.html). The file was too big to embed it in this blog post.
+
+## Getting only the Disassembly without running the benchmarks for a long time
+
+Sometimes you might be interested only in the disassembly, not the results of the benchmarks. In that case you can use **Job.Dry** which runs the benchmark only **once**.
+
+```cs
+public class JustDisassembly : ManualConfig
+{
+    public JustDisassembly()
+    {
+        Add(Job.Dry.With(Jit.RyuJit).With(Platform.X64).With(Runtime.Core).With(CsProjCoreToolchain.NetCoreApp20));
+        Add(Job.Dry.With(Jit.RyuJit).With(Platform.X64).With(Runtime.Core).With(CsProjCoreToolchain.NetCoreApp21));
+
+        Add(DisassemblyDiagnoser.Create(new DisassemblyDiagnoserConfig(printAsm: true, printPrologAndEpilog: true, recursiveDepth: 3)));
+    }
+}
+```
 
 # The Ultimate Combination
 
