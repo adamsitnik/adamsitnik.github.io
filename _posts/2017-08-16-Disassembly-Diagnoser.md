@@ -273,7 +273,7 @@ LaunchCount=1  TargetCount=3  WarmupCount=3
 
 </div>
 
-The disassembly result can be obtained [here](http://adamsitnik.com/files/disasm/Jit_Devirtualization-disassembly-report.html). The file was too big to embed it in this blog post.
+The disassembly result can be obtained [here](https://adamsitnik.com/files/disasm/Jit_Devirtualization-disassembly-report.html). The file was too big to embed it in this blog post.
 
 ## Getting only the Disassembly without running the benchmarks for a long time
 
@@ -295,12 +295,12 @@ public class JustDisassembly : ManualConfig
 # The Ultimate Combination
 
 
-Some time ago I have implemented [Hardware Counters](http://adamsitnik.com/Hardware-Counters-Diagnoser/) diagnoser for BenchmarkDotNet. Ever since then I wanted to combine the Instruction Pointers that comes with the events with the code.
+Some time ago I have implemented [Hardware Counters](https://adamsitnik.com/Hardware-Counters-Diagnoser/) diagnoser for BenchmarkDotNet. Ever since then I wanted to combine the Instruction Pointers that comes with the events with the code.
 
 Now it was finally possible. ClrMD gives me the asm with IPs, ETW gives me hardware counters with IPs. That's all I need.
 
 Let's use both diagnosers to answer the famous *"[Why is it faster to process a sorted array than an unsorted array?
-](http://stackoverflow.com/questions/11227809/why-is-it-faster-to-process-a-sorted-array-than-an-unsorted-array)*".
+](https://stackoverflow.com/questions/11227809/why-is-it-faster-to-process-a-sorted-array-than-an-unsorted-array)*".
 
 ```cs
 class Program
@@ -369,13 +369,13 @@ The new report:
 
 When we attach with ClrMD to the benchmarked process we ask it for the asm instructions for given address. The address is Instruction Pointer (IP).
 
-The other diagnoser is [using ETW](http://adamsitnik.com/Hardware-Counters-ETW/) to gather the PMC events. Each event comes with hardware counter type, interval, Instruction Pointer and process Id.
+The other diagnoser is [using ETW](https://adamsitnik.com/Hardware-Counters-ETW/) to gather the PMC events. Each event comes with hardware counter type, interval, Instruction Pointer and process Id.
 
 When we detect that user is using both diagnosers we enable [Instruction Pointer exporter](https://github.com/dotnet/BenchmarkDotNet/blob/master/src/BenchmarkDotNet.Core/Exporters/InstructionPointerExporter.cs). It eliminates the noise (events with IPs that don't belong to the benchmarked code like BenchmarkDotNet engine) and aggregates the results.
 
 ## Skid
 
-Please keep in mind that we just show what we get. The PMC events are usually delayed. They are collected in Event-Based Sampling (EBS) mode. When the event occurs, the counter increments and when it reaches the max interval value the event is fired with current Instruction Pointer ([good explanation](http://openlab.web.cern.ch/sites/openlab.web.cern.ch/files/technical_documents/TheOverheadOfProfilingUsingPMUhardwareCounters.pdf)). We try to overcome the side effects of this by running a lot of iterations of the benchmarked code. If your processor support PEBS it should also help.
+Please keep in mind that we just show what we get. The PMC events are usually delayed. They are collected in Event-Based Sampling (EBS) mode. When the event occurs, the counter increments and when it reaches the max interval value the event is fired with current Instruction Pointer ([good explanation](https://openlab.web.cern.ch/sites/openlab.web.cern.ch/files/technical_documents/TheOverheadOfProfilingUsingPMUhardwareCounters.pdf)). We try to overcome the side effects of this by running a lot of iterations of the benchmarked code. If your processor support PEBS it should also help.
 
 {: .center}
 ![Skid](/images/disasm/hardwareCounters_skid.png)

@@ -87,4 +87,4 @@ session.Source.Kernel.PerfInfoPMCSample += OnPerfInfoPmcSample;
 
 * [xunit-performance](https://github.com/Microsoft/xunit-performance)
 * [PerfView](https://github.com/microsoft/perfview)
-* [Microsoft.Diagnostics.Tracing.TraceEvent](https://www.nuget.org/packages/Microsoft.Diagnostics.Tracing.TraceEvent/) + [ILSpy](http://ilspy.net/)
+* [Microsoft.Diagnostics.Tracing.TraceEvent](https://www.nuget.org/packages/Microsoft.Diagnostics.Tracing.TraceEvent/) + [ILSpy](https://ilspy.net/)

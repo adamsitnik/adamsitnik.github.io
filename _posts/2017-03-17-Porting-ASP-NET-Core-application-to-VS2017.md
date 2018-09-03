@@ -16,8 +16,8 @@ This post is not a complete guide on porting. I want to show you what problems I
 
 Nate McMaster, who is a developer on the ASP.NET team wrote two great blog posts about porting to MSBuild. If you want to have a good understanding of what you are doing you should read them first:
 
-* [Project.json to MSBuild conversion guide](http://www.natemcmaster.com/blog/2017/01/19/project-json-to-csproj/)
-* [Part 2 - Caveats of project.json to MSBuild conversion](http://www.natemcmaster.com/blog/2017/02/01/project-json-to-csproj-part2/)
+* [Project.json to MSBuild conversion guide](https://www.natemcmaster.com/blog/2017/01/19/project-json-to-csproj/)
+* [Part 2 - Caveats of project.json to MSBuild conversion](https://www.natemcmaster.com/blog/2017/02/01/project-json-to-csproj-part2/)
 
 ## Use the tool
 
@@ -84,7 +84,7 @@ In case you also use `StyleCop.Analyzers` with custom rules you need to fix it:
 </PropertyGroup>
 ```
 
-Please notice the usage of `$(SolutionDir)`. MSBuild has a [long list](http://stackoverflow.com/a/1453023) of available properties. By using them you can take advantage of all MSBuild features!
+Please notice the usage of `$(SolutionDir)`. MSBuild has a [long list](https://stackoverflow.com/a/1453023) of available properties. By using them you can take advantage of all MSBuild features!
 
 You might also discover that VS has created `runtimeconfig.template.json` file next to your ASP.NET Core app project file.
 
@@ -160,7 +160,7 @@ Which got me one step closer:
 {: .center}
 ![Unable to run](/images/porting/unhandledException.png)
 
-Which I fixed with help of [Stack Overflow user Cody](http://stackoverflow.com/a/42315239) by installing `Microsoft.Win32.Primitives 4.0.0.0` NuGet package. This particular app is using ASP.NET Core and Kestrel, but runs on `net46`. Those of you who target `netcoreapp` might not encounter the same problem.
+Which I fixed with help of [Stack Overflow user Cody](https://stackoverflow.com/a/42315239) by installing `Microsoft.Win32.Primitives 4.0.0.0` NuGet package. This particular app is using ASP.NET Core and Kestrel, but runs on `net46`. Those of you who target `netcoreapp` might not encounter the same problem.
 
 Now I was able to compile, run and debug our app.
 

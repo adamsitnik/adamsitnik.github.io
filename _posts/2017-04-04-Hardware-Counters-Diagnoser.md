@@ -6,7 +6,7 @@ excerpt_separator: <!--more-->
 
 ## Introduction
 
-BenchmarkDotNet is a powerful .NET library for benchmarking ([more about it](http://benchmarkdotnet.org/)). This post describes how you can collect [Hardware Performance Counters](https://en.wikipedia.org/wiki/Hardware_performance_counter) with BenchmarkDotNet. If you want to learn about the ETW internals behind it then you might find [this post](http://adamsitnik.com/Hardware-Counters-ETW/) useful.
+BenchmarkDotNet is a powerful .NET library for benchmarking ([more about it](https://benchmarkdotnet.org/)). This post describes how you can collect [Hardware Performance Counters](https://en.wikipedia.org/wiki/Hardware_performance_counter) with BenchmarkDotNet. If you want to learn about the ETW internals behind it then you might find [this post](https://adamsitnik.com/Hardware-Counters-ETW/) useful.
 
 ## The Story
 
@@ -24,7 +24,7 @@ And Tanner Gooding [mentioned](https://github.com/dotnet/corefxlab/pull/1278#iss
 > 
 > I also know cache misses and branch mispredictions are also supported, as they are displayed on the internal benchmark comparison site (I'm not sure how to enable those ones though).
 
-I could finally add a new feature to BenchmarkDotNet that was related to performance, not the MSBuild/project.json stuff ;) So I just downloaded the source codes of [xunit-performance](https://github.com/Microsoft/xunit-performance) and [PerfView](https://github.com/microsoft/perfview) and dig into the details. `Microsoft.Diagnostics.Tracing.TraceEvent` is not OSS yet, so I used my favorite .NET decompiler [ILSpy](http://ilspy.net/) to get the full picture. 
+I could finally add a new feature to BenchmarkDotNet that was related to performance, not the MSBuild/project.json stuff ;) So I just downloaded the source codes of [xunit-performance](https://github.com/Microsoft/xunit-performance) and [PerfView](https://github.com/microsoft/perfview) and dig into the details. `Microsoft.Diagnostics.Tracing.TraceEvent` is not OSS yet, so I used my favorite .NET decompiler [ILSpy](https://ilspy.net/) to get the full picture. 
 
 ## Limitations
 
@@ -82,7 +82,7 @@ private class CustomConfig : ManualConfig
 
 
 Let's use our new diagnoser to answer the famous *"[Why is it faster to process a sorted array than an unsorted array?
-](http://stackoverflow.com/questions/11227809/why-is-it-faster-to-process-a-sorted-array-than-an-unsorted-array)*".
+](https://stackoverflow.com/questions/11227809/why-is-it-faster-to-process-a-sorted-array-than-an-unsorted-array)*".
 
 ```cs
 class Program
@@ -205,4 +205,4 @@ Sample results:
 
 * [Understanding How General Exploration Works in Intel® VTune™ Amplifier XE](https://software.intel.com/en-us/articles/understanding-how-general-exploration-works-in-intel-vtune-amplifier-xe) by Jackson Marusarz (Intel)
 * [CPU Performance Counters on Windows](https://randomascii.wordpress.com/2016/11/27/cpu-performance-counters-on-windows/) by Bruce Dawson
-* [What is Branch Prediction?](http://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-an-unsorted-array/11227902) by [Mysticial](http://stackoverflow.com/users/922184/mysticial)
+* [What is Branch Prediction?](https://stackoverflow.com/questions/11227809/why-is-processing-a-sorted-array-faster-than-an-unsorted-array/11227902) by [Mysticial](https://stackoverflow.com/users/922184/mysticial)

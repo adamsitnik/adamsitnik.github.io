@@ -6,7 +6,7 @@ excerpt_separator: <!--more-->
 
 ## Introduction
 
-BenchmarkDotNet is a powerful .NET library for benchmarking ([more about it](http://benchmarkdotnet.org/)). MemoryDiagnoser is one of its features that allows measuring the number of allocated bytes and garbage collection frequency.
+BenchmarkDotNet is a powerful .NET library for benchmarking ([more about it](https://benchmarkdotnet.org/)). MemoryDiagnoser is one of its features that allows measuring the number of allocated bytes and garbage collection frequency.
 
 ## The Story
 
@@ -81,7 +81,7 @@ The results (some columns were removed for brevity):
 Let's analyse the results:
 
 * Allocated for `EmptyArray` is zero. That's great, the simplest case is covered.
-* Allocated for `EightBytes` is `20 B` for `X86` and `32 B` for `X64`. [Why is that?](http://stackoverflow.com/a/1589759) We need extra space for object header, method table pointer and length of the array. The overhead is 3x Pointer Size. `8 + 3x4 = 20. 8 + 3x8 = 32`
+* Allocated for `EightBytes` is `20 B` for `X86` and `32 B` for `X64`. [Why is that?](https://stackoverflow.com/a/1589759) We need extra space for object header, method table pointer and length of the array. The overhead is 3x Pointer Size. `8 + 3x4 = 20. 8 + 3x8 = 32`
 * Allocated for `SomeLinq` is `356 B` for `X86` and `496 B` for `X64`. Let's use the Visual Studio 2015 Memory Allocation Profiler to compare the results.
 
 {: .center}
@@ -131,14 +131,14 @@ private class CustomConfig : ManualConfig
 When reading the results please keep in mind that:
 
 * 1 kB = 1 000 bytes. Not 1024. I decided to follow the [Wikipedia](https://en.wikipedia.org/wiki/Kilobyte), not my personal preferences.
-* Every reference type instance has two extra fields: object header and method table pointer. That's why the results always include 2x pointer size for every object allocation. For more detailed info about extra overhead please read this great blog post [How does Object.GetType() really work?](http://tooslowexception.com/how-does-gettype-work/) by Konrad Kokosa.
+* Every reference type instance has two extra fields: object header and method table pointer. That's why the results always include 2x pointer size for every object allocation. For more detailed info about extra overhead please read this great blog post [How does Object.GetType() really work?](https://tooslowexception.com/how-does-gettype-work/) by Konrad Kokosa.
 * CLR does some aligning. If you try to allocate `new byte[7]` array, it will allocate `byte[8]` array.
 
 
 ## FAQ
 
 * Can the `Gen 0/1/2` results be compared with old results produced by older versions of BenchmarkDotNet? No, they can't. We scale the results in a different way.
-* Why is the Allocated column missing on Mono? Because Mono [does not](http://stackoverflow.com/questions/40234948/how-to-get-the-number-of-allocated-bytes-in-mono) provide any API to read the number of allocated bytes.
+* Why is the Allocated column missing on Mono? Because Mono [does not](https ://stackoverflow.com/questions/40234948/how-to-get-the-number-of-allocated-bytes-in-mono) provide any API to read the number of allocated bytes.
 * Can the MemoryDiagnoser affect the time results by introducing some extra overhead? No, because we perform separate run for the diagnosers only. The results from this run are not included in the timing results.
 * Is there any API in BenchmarkDotNet that exposes the GC Statistics? Yes, the `summary` returned by `BenchmarkRunner.Run` contains all `reports`, which expose the `GcStats` property.
 * How to verify that particular code does not perform any heap allocations?
@@ -152,7 +152,7 @@ Assert.True(summary.Reports.All(report => report.GcStats.BytesAllocatedPerOperat
 ## Sources
 
 * [Garbage Collection ETW Events](https://msdn.microsoft.com/en-us/library/ff356162(v=vs.110).aspx#gcallocationtick_v2_event) by MSDN
-* [How does Object.GetType() really work?](http://tooslowexception.com/how-does-gettype-work/) by Konrad Kokosa
+* [How does Object.GetType() really work?](https://tooslowexception.com/how-does-gettype-work/) by Konrad Kokosa
 * [Design of Allocator](https://github.com/dotnet/coreclr/blob/master/Documentation/botr/garbage-collection.md#design-of-allocator) by CLR Team
 * GitHub issues:
 	- [Expose GC allocation statistics](https://github.com/dotnet/coreclr/issues/6275)

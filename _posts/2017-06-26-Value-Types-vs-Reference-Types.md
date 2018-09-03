@@ -83,7 +83,7 @@ For this simple example, the difference is really huge. In our case, we could fi
 
 ### Benchmarks!
 
-It's important to know the theory, but we need to run some benchmarks to measure the performance difference. Once again I am using `BenchmarkDotNet` and its feature called `HardwareCounters` which allows me to track CPU Cache Misses. [Here](http://adamsitnik.com/Hardware-Counters-Diagnoser/) you can find my blog post about Collecting Hardware Performance Counters with BenchmarkDotNet.
+It's important to know the theory, but we need to run some benchmarks to measure the performance difference. Once again I am using `BenchmarkDotNet` and its feature called `HardwareCounters` which allows me to track CPU Cache Misses. [Here](https://adamsitnik.com/Hardware-Counters-Diagnoser/) you can find my blog post about Collecting Hardware Performance Counters with BenchmarkDotNet.
 The benchmark is a simple loop with read access in it's every iteration. I would say that it's just a CPU cache benchmark.
 
 **Note**: This benchmark is not a real life scenario. In real life, your struct would most probably be bigger (usually two fields is not enough). Hence the extra overhead of two fields for reference types would have a smaller performance impact. Smaller but still significant in high-performance scenarios!
@@ -175,7 +175,7 @@ As you can see the difference (Scaled column) is really significant!
 
 But the `CacheMisses/Op` column is empty?!? What does it mean? In this case, it means that I run too few loop iterations (just 100). 
 
-An explanation for the curious: BenchmarkDotNet is using [ETW](http://adamsitnik.com/Hardware-Counters-ETW/) to collect hardware counters. ETW is simply exposing what the hardware has to offer. Each Performance Monitoring Units (PMU) register is configured to count a specific event and given a sample-after value (SAV). For my PC the minimum Cache Miss HC sampling interval is 4000. In value type benchmark I should get Cache Miss once every 8 loop iterations (`cacheLineSize / sizeOf(ValueTuple<int, int>) = 64 / 8 = 8`). I have 100 iterations here, so it should be 12 Cache Misses for Benchmark. But the PMU will notify ETW, which will notify BenchmarkDotNet every 4 000 events. So once every 333 (`4 000 / 12`) benchmark invocation. BenchmarkDotNet implements a heuristic which decides how many times the benchmarked method should be invoked. It this example the method was executed too few times to capture enough of events. **So if you want to capture some hardware counters with BenchmarkDotNet you need to perform plenty of iterations!** For more info about PMU you can refer to [this article](https://software.intel.com/en-us/articles/understanding-how-general-exploration-works-in-intel-vtune-amplifier-xe) by Jackson Marusarz (Intel).
+An explanation for the curious: BenchmarkDotNet is using [ETW](https://adamsitnik.com/Hardware-Counters-ETW/) to collect hardware counters. ETW is simply exposing what the hardware has to offer. Each Performance Monitoring Units (PMU) register is configured to count a specific event and given a sample-after value (SAV). For my PC the minimum Cache Miss HC sampling interval is 4000. In value type benchmark I should get Cache Miss once every 8 loop iterations (`cacheLineSize / sizeOf(ValueTuple<int, int>) = 64 / 8 = 8`). I have 100 iterations here, so it should be 12 Cache Misses for Benchmark. But the PMU will notify ETW, which will notify BenchmarkDotNet every 4 000 events. So once every 333 (`4 000 / 12`) benchmark invocation. BenchmarkDotNet implements a heuristic which decides how many times the benchmarked method should be invoked. It this example the method was executed too few times to capture enough of events. **So if you want to capture some hardware counters with BenchmarkDotNet you need to perform plenty of iterations!** For more info about PMU you can refer to [this article](https://software.intel.com/en-us/articles/understanding-how-general-exploration-works-in-intel-vtune-amplifier-xe) by Jackson Marusarz (Intel).
 <div class="scrollable-table-wrapper" markdown="block">
 
  |                Method |       Jit | Platform |       Count |              Mean | Scaled | CacheMisses/Op |
@@ -190,7 +190,7 @@ The more loop iterations (Count column), the more Cache Misses events we get. **
 
 ## GC Impact
 
-Reference Types are always allocated on the managed heap (it may change in the [future](http://xoofx.com/blog/2015/10/08/stackalloc-for-class-with-roslyn-and-coreclr/)). Heap is managed by Garbage Collector (GC). The allocation of heap memory is fast. **The problem is that the deallocation is performed by non-deterministic GC**. GC implements own heuristic which allows it to decide when to perform the cleanup. The cleanup itself takes some time. It means that you can not predict when the cleanup will take place and it adds extra overhead.
+Reference Types are always allocated on the managed heap (it may change in the [future](https://xoofx.com/blog/2015/10/08/stackalloc-for-class-with-roslyn-and-coreclr/)). Heap is managed by Garbage Collector (GC). The allocation of heap memory is fast. **The problem is that the deallocation is performed by non-deterministic GC**. GC implements own heuristic which allows it to decide when to perform the cleanup. The cleanup itself takes some time. It means that you can not predict when the cleanup will take place and it adds extra overhead.
 
 Value Types can be allocated both on the stack and the heap. Stack is not managed by GC. Anytime you declare a local value type variable it's allocated on the stack. When method ends, the stack is being unwinded and the value is gone. **This deallocation is super fast. And in overall we have less pressure for the GC!** The pressure is not equal to zero because anyway, GC traverses stacks, so the deeper the stack the more work it might have.
 
@@ -238,7 +238,7 @@ public class AllocationsConfig : ManualConfig
 
 ### The Results
 
-If you are not familiar with the output produced by BenchmarkDotNet with Memory Diagnoser enabled, you can read my [dedicated blog post](http://adamsitnik.com/the-new-Memory-Diagnoser/#how-to-read-the-results) to find out how to read these results.
+If you are not familiar with the output produced by BenchmarkDotNet with Memory Diagnoser enabled, you can read my [dedicated blog post](https://adamsitnik.com/the-new-Memory-Diagnoser/#how-to-read-the-results) to find out how to read these results.
 
 ```
 BenchmarkDotNet=v0.10.8, OS=Windows 8.1 (6.3.9600)
@@ -434,7 +434,7 @@ Job=RyuJitX64  Jit=RyuJit  Platform=X64
 }
 ```
  
- When the `T` is constrained with `where T : INameOfTheInterface`, the C# compiler emits additional `IL` instruction called `constrained` ([Docs](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx)).
+ When the `T` is constrained with `where T : INameOfTheInterface`, the C# compiler emits additional `IL` instruction called `constrained` ([Docs](https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx)).
  
  ```cs
  .method public hidebysig 
@@ -600,16 +600,16 @@ Runtime=Clr
 ## Sources
 
 * [Pro .NET Performance](https://www.amazon.com/dp/1430244585) book by Sasha Goldshtein, Dima Zurbalev, Ido Flatow 
-* [How does Object.GetType() really work?](http://tooslowexception.com/how-does-gettype-work/) blog post by Konrad Kokosa
+* [How does Object.GetType() really work?](https://tooslowexception.com/how-does-gettype-work/) blog post by Konrad Kokosa
 * [Safe Systems Programming in C# and .NET](https://www.infoq.com/presentations/csharp-systems-programming) video by Joe Duffy
-* [Memory Systems](http://cs.umw.edu/~finlayson/class/spring16/cpsc305/notes/14-memory.html) article by University Of Mary Washington
+* [Memory Systems](https://cs.umw.edu/~finlayson/class/spring16/cpsc305/notes/14-memory.html) article by University Of Mary Washington
 * [Latency Numbers Every Programmer Should Know](https://people.eecs.berkeley.edu/~rcs/research/interactive_latency.html) article by Berkeley University
 * [Types of locality](https://en.wikipedia.org/wiki/Locality_of_reference#Types_of_locality) definition by Wikipedia
 * [Understanding How General Exploration Works in Intel® VTune™ Amplifier XE](https://software.intel.com/en-us/articles/understanding-how-general-exploration-works-in-intel-vtune-amplifier-xe) by Jackson Marusarz (Intel)
-* [A new stackalloc operator for reference types with CoreCLR and Roslyn](http://xoofx.com/blog/2015/10/08/stackalloc-for-class-with-roslyn-and-coreclr/) blog post by Alexandre Mutel
+* [A new stackalloc operator for reference types with CoreCLR and Roslyn](https://xoofx.com/blog/2015/10/08/stackalloc-for-class-with-roslyn-and-coreclr/) blog post by Alexandre Mutel
 * [Boxing and Unboxing](https://msdn.microsoft.com/pl-pl/library/yz2be5wk(v=vs.90).aspx) article by MSDN
 * [Heap Allocations Viewer plugin](https://blog.jetbrains.com/dotnet/2014/06/06/heap-allocations-viewer-plugin/) blog post by Matt Ellis (JetBrains)
 * [SharpLab.io](https://sharplab.io/)
-* [OpCodes.Constrained Field](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx) article by MSDN
+* [OpCodes.Constrained Field](https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx) article by MSDN
 * [.NET Generics and Code Bloat](https://blogs.msdn.microsoft.com/carlos/2009/11/09/net-generics-and-code-bloat-or-its-lack-thereof/) article by MSDN
 * [What happens with a generic constraint that removes this requirement?](https://stackoverflow.com/a/5532061) Stack Overflow answer by Eric Lippert

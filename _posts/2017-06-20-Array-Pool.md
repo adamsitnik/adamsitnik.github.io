@@ -157,7 +157,7 @@ public class DontForceGcCollectionsConfig : ManualConfig
 
 ### The Results
 
-If you are not familiar with the output produced by BenchmarkDotNet with Memory Diagnoser enabled, you can read my [dedicated blog post](http://adamsitnik.com/the-new-Memory-Diagnoser/#how-to-read-the-results) to find out how to read these results.
+If you are not familiar with the output produced by BenchmarkDotNet with Memory Diagnoser enabled, you can read my [dedicated blog post](https://adamsitnik.com/the-new-Memory-Diagnoser/#how-to-read-the-results) to find out how to read these results.
 
 ``` ini
 BenchmarkDotNet=v0.10.7, OS=Windows 10 Redstone 1 (10.0.14393)
@@ -232,7 +232,7 @@ If you start using `ArrayPool<T>.Shared` instead of allocating with `new` operat
 
 ## Pooling MemoryStream(s)
 
-Sometimes an array might be not enough to avoid LOH allocations. An example can be 3rd party api that accepts `Stream` instance. Thanks to [Victor Baybekov](https://twitter.com/buybackoff) I have discovered [Microsoft.IO.RecyclableMemoryStream](https://github.com/Microsoft/Microsoft.IO.RecyclableMemoryStream). This library provides pooling for MemoryStream objects. It was designed by Bing engineers to help with LOH issues. For more details you can go [this](http://www.philosophicalgeek.com/2015/02/06/announcing-microsoft-io-recycablememorystream/) blog post by Ben Watson.
+Sometimes an array might be not enough to avoid LOH allocations. An example can be 3rd party api that accepts `Stream` instance. Thanks to [Victor Baybekov](https://twitter.com/buybackoff) I have discovered [Microsoft.IO.RecyclableMemoryStream](https://github.com/Microsoft/Microsoft.IO.RecyclableMemoryStream). This library provides pooling for MemoryStream objects. It was designed by Bing engineers to help with LOH issues. For more details you can go [this](https://www.philosophicalgeek.com/2015/02/06/announcing-microsoft-io-recycablememorystream/) blog post by Ben Watson.
 
 ## Summary
 
@@ -252,4 +252,4 @@ Sometimes an array might be not enough to avoid LOH allocations. An example can 
 * [Fundamentals of Garbage Collection](https://msdn.microsoft.com/en-us/library/ee787088(v=vs.110).aspx#generations) article by MSDN
 * [Large Object Heap Uncovered](https://blogs.msdn.microsoft.com/maoni/2016/05/31/large-object-heap-uncovered-from-an-old-msdn-article/) article by Maoni Stephens
 * [No More Memory Fragmentation on the .NET Large Object Heap](https://blogs.msdn.microsoft.com/mariohewardt/2013/06/26/no-more-memory-fragmentation-on-the-net-large-object-heap/) article by Mario Hewardt
-* [Announcing Microsoft.IO.RecycableMemoryStream](http://www.philosophicalgeek.com/2015/02/06/announcing-microsoft-io-recycablememorystream/) article by Ben Watson
+* [Announcing Microsoft.IO.RecycableMemoryStream](https://www.philosophicalgeek.com/2015/02/06/announcing-microsoft-io-recycablememorystream/) article by Ben Watson

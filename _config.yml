@@ -39,13 +39,13 @@ disqus: adamsitnik
 # Enter your Google Analytics web tracking code (e.g. UA-2110908-2) to activate tracking
 google_analytics: UA-90440750-1
 
-# Your website URL (e.g. http://barryclark.github.io or http://www.barryclark.co)
+# Your website URL (e.g. https://barryclark.github.io or https://www.barryclark.co)
 # Used for Sitemap.xml and your RSS feed
-url: http://www.adamsitnik.com
+url: https://www.adamsitnik.com
 
 # If you're hosting your site at a Project repository on GitHub pages
-# (http://yourusername.github.io/repository-name)
-# and NOT your User repository (http://yourusername.github.io)
+# (https://yourusername.github.io/repository-name)
+# and NOT your User repository (https://yourusername.github.io)
 # then add in the baseurl here, like this: "/repository-name"
 baseurl: ""
 

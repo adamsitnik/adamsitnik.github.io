@@ -8,11 +8,11 @@ tl;dr Pass and return by reference to avoid large struct copying. It's type and 
 
 ## Introduction
 
-Since C# 1.0 we could pass arguments to methods by reference. It means that instead of copying value types every time we pass them to a method we can just pass them by reference. It allows us to overcome one of the very few disadvantages of value types which I described in my [previous](http://adamsitnik.com/Value-Types-vs-Reference-Types/) blog post "Value Types vs Reference Types".
+Since C# 1.0 we could pass arguments to methods by reference. It means that instead of copying value types every time we pass them to a method we can just pass them by reference. It allows us to overcome one of the very few disadvantages of value types which I described in my [previous](https://adamsitnik.com/Value-Types-vs-Reference-Types/) blog post "Value Types vs Reference Types".
 
 Passing is not enough to cover all scenarios. C# 7.0 adds new possibilities: declaring references to local variables and returning by reference from methods.
 
-**Note:** I want to focus on the performance aspect here. If you want to learn more about `ref returns and ref locals` you should read these awesome [blog posts](http://mustoverride.com/tags/#refs) from Vladimir Sadov. He is the software engineer who has implemented this feature for C# compiler. So you can get it straight from the horse's mouth!
+**Note:** I want to focus on the performance aspect here. If you want to learn more about `ref returns and ref locals` you should read these awesome [blog posts](https://mustoverride.com/tags/#refs) from Vladimir Sadov. He is the software engineer who has implemented this feature for C# compiler. So you can get it straight from the horse's mouth!
 
 ### Reminder
 
@@ -26,7 +26,7 @@ ref int localReference = ref localVariable;
 *  `ref localVariable` - De**ref**erencing local variable. If you have C++ background you can think of it as of `*localVariable`
 * `ref int localReference` - Defining local **ref**erence. `localReference` is an alias of an existing variable.
 * `ref array[0]` - De**ref**erencing array's first element.
-* `ref int method()` - The result of the method is passed by **ref**erence. The method still returns an int. [Not a pointer!](http://mustoverride.com/refs-not-ptrs/)
+* `ref int method()` - The result of the method is passed by **ref**erence. The method still returns an int. [Not a pointer!](https://mustoverride.com/refs-not-ptrs/)
 
 <!--more-->
 
@@ -34,7 +34,7 @@ ref int localReference = ref localVariable;
 
 In C# all parameters are passed to methods by value by default. It means that the Value Type instance is copied every time we pass it to a method. Or when we return it from a method. The bigger the Value Type is, the more expensive it is to copy it. For small value types, the JIT compiler might optimize the copying (inline the method, use registers for copying & more).
 
-We can pass arguments to methods by reference. It's not a new feature, it was part of C# 1.0. Anyway, I am going to measure it to make sure that it actually improves the performance. Once again I am using [BenchmarkDotNet](http://benchmarkdotnet.org/) for benchmarking.
+We can pass arguments to methods by reference. It's not a new feature, it was part of C# 1.0. Anyway, I am going to measure it to make sure that it actually improves the performance. Once again I am using [BenchmarkDotNet](https://benchmarkdotnet.org/) for benchmarking.
 
 ### Benchmarks
 
@@ -192,14 +192,14 @@ private void Init(ref BigStruct reference)
 
 ### Results
 
-This time I have used `RPlotExporter` which produces some fancy charts if you have `R` installed and `R_HOME` environment variable configured. More info can be obtained [here](http://benchmarkdotnet.org/Configs/Exporters.htm#plots).
+This time I have used `RPlotExporter` which produces some fancy charts if you have `R` installed and `R_HOME` environment variable configured. More info can be obtained [here](https://benchmarkdotnet.org/Configs/Exporters.htm#plots).
 
 {: .center}
 ![Initializing Big Structs](/images/references/InitializingBigStructs-barplot.png)
 
 As you can see the difference is HUGE. In this simple scenario, we got x4.51 performance improvement for RyuJit! 5.58 for LegacyJitX64 and 5.05 for LegacyJitX86. It's clear that this feature can be very useful in similar scenarios.
 
-But how is it possible that the new `ref locals` feature works with the legacy Jits? Have Microsoft released a Windows patch with .NET framework improvements? No! C# features like ref parameters, locals and returns are just using the existing feature of CLR called [managed pointers](http://mustoverride.com/managed-refs-CLR/). So to use it you just need IDE with Roslyn 2.0 version (Visual Studio 2017 or Rider) and you can deploy the code to your client's old virtual machine which might be running with some very old .NET framework ;)
+But how is it possible that the new `ref locals` feature works with the legacy Jits? Have Microsoft released a Windows patch with .NET framework improvements? No! C# features like ref parameters, locals and returns are just using the existing feature of CLR called [managed pointers](https://mustoverride.com/managed-refs-CLR/). So to use it you just need IDE with Roslyn 2.0 version (Visual Studio 2017 or Rider) and you can deploy the code to your client's old virtual machine which might be running with some very old .NET framework ;)
 
 ## Returning references
 
@@ -313,10 +313,10 @@ Don't forget to support the new C# 7.2 features! Thumbs up!
 
 ## Sources
 
-* [ref returns are not pointers](http://mustoverride.com/refs-not-ptrs/) blog post by Vladimir Sadov
-* [Managed pointers](http://mustoverride.com/refs-not-ptrs/) blog post by Vladimir Sadov
-* [Local variables cannot be returned by reference](http://mustoverride.com/ref-returns-and-locals/) blog post by Vladimir Sadov
-* [Safe to return rules for ref returns.](http://mustoverride.com/safe-to-return/) blog post by Vladimir Sadov
-* [Why ref locals allow only a single binding?](http://mustoverride.com/ref-locals_single-assignment/) blog post by Vladimir Sadov
-* [Spans and ref part 1 : ref](http://blog.marcgravell.com/2017/04/spans-and-ref-part-1-ref.html) blog post by Marc Gravell
+* [ref returns are not pointers](https://mustoverride.com/refs-not-ptrs/) blog post by Vladimir Sadov
+* [Managed pointers](https://mustoverride.com/refs-not-ptrs/) blog post by Vladimir Sadov
+* [Local variables cannot be returned by reference](https://mustoverride.com/ref-returns-and-locals/) blog post by Vladimir Sadov
+* [Safe to return rules for ref returns.](https://mustoverride.com/safe-to-return/) blog post by Vladimir Sadov
+* [Why ref locals allow only a single binding?](https://mustoverride.com/ref-locals_single-assignment/) blog post by Vladimir Sadov
+* [Spans and ref part 1 : ref](https://blog.marcgravell.com/2017/04/spans-and-ref-part-1-ref.html) blog post by Marc Gravell
 * [What are the implications of using unsafe code?](https://stackoverflow.com/a/706578/5852046) Stack Overflow answer by Jared Par
