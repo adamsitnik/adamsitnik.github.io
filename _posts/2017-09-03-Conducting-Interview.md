@@ -8,7 +8,11 @@ Interviewing people is not an easy job to do. You want to find the person which 
 
 As an interviewer, you are also being judged by the candidate. You very often create the first impression of the company. So you also need to make a good impression. Nobody wants to work with mean or incompetent people!
 
-In this blog post, I am describing my way of conducting the interview. In my career, I have interviewed a hundred developers and hired over a dozen of them. So my experience is not very reach, it's limited to "my sample". I recently changed job and I don't interview people anymore but I hope that my experience can help somebody to improve the interviewing process.
+In this blog post, I am describing my way of conducting the interview. In my career, I have interviewed a hundred developers and hired over a dozen of them. So my experience is not very reach, it's limited to "my sample". 
+
+**Disclaimer**: After joining Microsoft I don't interview candidates anymore. This post is my personal approach build upon the experience prior to joining MS.
+
+I hope that my experience can help somebody to improve the interviewing process!
 
 <!--more-->
 
@@ -135,13 +139,13 @@ So given candidate somehow managed to solve the problem, but did not use the rig
 
 When a smart developer faces a new problem then she or he starts the web browser and performs a search. Chooses the right tool and gets the job done. If the problem is more complex it might require reading a book, discussing it with other teammates, architect or tech lead.
 
-## Fuck up
+## Failure
 
-This is simple. I just ask about the most recent fuck up. What was that? Why did it happen? What did you learn from it? What did you do to make sure the problem does not occur again?
+This is simple. I just ask about the most recent failure. What was that? Why did it happen? What did you learn from it? What did you do to make sure the problem does not occur again?
 
 I want to hire people who can acknowledge that they did something wrong and learn from their own mistakes. Nobody wants to work with narcissists.
 
-People are typically afraid to answer this question so I encourage them by talking about my recent fuck up. This helps a lot and opens most of the candidates.
+People are typically afraid to answer this question so I encourage them by talking about my recent failure. This helps a lot and opens most of the candidates.
 
 ## My recent assignment
 
