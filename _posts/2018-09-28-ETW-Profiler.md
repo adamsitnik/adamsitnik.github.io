@@ -106,7 +106,7 @@ What we have today comes with following limitations:
 
 ## How to use it?
 
-You need to install `BenchmarkDotNet.Diagnostics.Windows` package. The official `0.11.2` version should be released to nuget.org in October. If you can't wait and want to give it a try today you need to download `0.11.1.755` preview package from our CI feed by adding following line `<add key="appveyor-bdn" value="https://ci.appveyor.com/nuget/benchmarkdotnet" />` to your `NuGet.config` file (if you don't have such file you can generate if by running `dotnet new nugetconfig` command). 
+You need to install `BenchmarkDotNet.Diagnostics.Windows` package. The official `0.11.2` version should be released to nuget.org in October. If you can't wait and want to give it a try today you need to download `0.11.1.767` preview package from our CI feed by adding following line `<add key="appveyor-bdn" value="https://ci.appveyor.com/nuget/benchmarkdotnet" />` to your `NuGet.config` file (if you don't have such file you can generate if by running `dotnet new nugetconfig` command). 
 
 It can be enabled in few ways, some of them:
 
@@ -132,6 +132,8 @@ class Program
 ```
 
 * Passing `-p` or `--profile` command line argument to `BenchmarkSwitcher`
+
+**Note:** If you want to use the console line argument, but you don't consume the `EtwProfiler` or any other public types from `BenchmarkDotNet.Diagnostics.Windows` package and you are using `dotnet build` instead of `dotnet publish` then you also need to apply `<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>` in your project file. This is required to make the dynamic assembly working. `dotnet build` won't copy `BenchmarkDotNet.Diagnostics.Windows.dll` to the output folder if you don't use any of it's types.
 
 
 ## Configuration
