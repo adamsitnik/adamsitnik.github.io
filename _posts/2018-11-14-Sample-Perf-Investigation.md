@@ -161,7 +161,7 @@ But the most important information is visible in the simple histogram:
 
 What does this information tell us? That parsing (red block 2) is a performance bottleneck here! Moreover, as you can see, Flamegraph itself gives a great overview but does not tell us about the performance over time. This simple histogram does!
 
-## Isoloate the bottleneck
+## Isolate the bottleneck
 
 The next step is to write a benchmark that isoloates the bottleneck.
 
