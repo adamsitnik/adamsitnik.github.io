@@ -31,7 +31,6 @@ I could finally add a new feature to BenchmarkDotNet that was related to perform
 What we have today comes with following limitations:
 
 * Accuracy is limited by sampling frequency and additional code performed in the benchmarked process by our Engine. It's good but not perfect. For more accurate results you should use some profilers like Intel VTune Amplifier.
-* dependency to `Microsoft.Diagnostics.Tracing.TraceEvent` [NuGet](https://www.nuget.org/packages/Microsoft.Diagnostics.Tracing.TraceEvent/) package (later on in this post I describe how to get it working for .NET Core/Mono on Windows)
 * Windows 8+ only
 * No Hyper-V (Virtualization) support
 * Requires to run as Admin (ETW Kernel Session)
@@ -53,9 +52,9 @@ What we have today comes with following limitations:
 
 ## How to use it?
 
-You need to install `BenchmarkDotNet.Diagnostics.Windows` package. The official 0.10.4 version should be released to nuget.org after 10th of April. As of today you can get the latest version from our CI feed by adding following line `<add key="appveyor-bdn" value="https://ci.appveyor.com/nuget/benchmarkdotnet" />` to your `NuGet.config` file. 
+You need to install latest `BenchmarkDotNet.Diagnostics.Windows` package.
 
-It can be enabled in two ways:
+It can be enabled in three ways:
 
 * Use the new attribute (apply it on a class that contains Benchmarks):
 
@@ -76,6 +75,8 @@ private class CustomConfig : ManualConfig
     }
 }
 ```
+
+* Passing `--counters` command line argument to `BenchmarkSwitcher`. Example: `--counters BranchInstructions+BranchMispredictions`
 
 
 ## Sample
@@ -152,54 +153,6 @@ and the results:
 High Mispredict Rate (`23,70%`) is a clear signal that we are victims of branch prediction failure. Which results in `6x` slowdown!! 
 
 **Note:** The results are scaled per operation. Mispredict rate is an extra column that is visible if you use `BranchInstructions` and `BranchMispredictions` counters.
-
-## How to get it running for .NET Core/Mono on Windows?
-
-In BenchmarkDotNet we create and compile a new project for every benchmark. The thing you run in the console is Host process, but each benchmark is executed as a separate process (child). `Microsoft.Diagnostics.Tracing.TraceEvent` does not support .NET Core yet ([issue](https://github.com/Microsoft/perfview/issues/165)), but it allows to gather data for any other process. So if your Host process is a classic desktop .NET Framework 4.6+ and you run your benchmarks for .NET Core/Mono the events can still be gathered by the Host. How to do it?
-
-Your project file needs to support both frameworks:
-
-```xml
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp1.1;net46</TargetFrameworks>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.10.3.87" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="BenchmarkDotNet.Diagnostics.Windows" Version="0.10.3.87" />
-  </ItemGroup>
-</Project>
-```
-
-Your BenchmarkDotNet config must enable all the runtimes. You can do it by using the fluent configurator:
-
-```cs
-var config = ManualConfig.Create(DefaultConfig.Instance)
-    .With(Job.Clr)
-    .With(Job.Core)
-    .Add(HardwareCounter.BranchMispredictions, HardwareCounter.BranchInstructions);
-            
-BenchmarkRunner.Run<Cpu_BranchPerdictor>(config);
-```
-
-And then you just need to run the host as classic .NET: `dotnet run -c Release -f net46`
-
-Sample results:
-
- |             Method | Runtime |        Mean | Mispredict rate | BranchInstructions/Op | BranchMispredictions/Op |
- |------------------- |-------- |------------ |---------------- |---------------------- |------------------------ |
- |       SortedBranch |     Clr |  21.3434 us |           0,03% |                 65452 |                      22 |
- |     UnsortedBranch |     Clr | 136.2859 us |          **23,81%** |                 73371 |                   17470 |
- |   SortedBranchless |     Clr |  28.7980 us |           0,05% |                 38253 |                      19 |
- | UnsortedBranchless |     Clr |  28.9019 us |           0,05% |                 33123 |                      15 |
- |       SortedBranch |    Core |  21.2255 us |           0,03% |                 82293 |                      28 |
- |     UnsortedBranch |    Core | 137.5567 us |          **24,03%** |                 67572 |                   16237 |
- |   SortedBranchless |    Core |  28.6537 us |           0,05% |                 35452 |                      16 |
- | UnsortedBranchless |    Core |  29.0826 us |           0,05% |                 41360 |                      19 |
 
 ## Sources
 
