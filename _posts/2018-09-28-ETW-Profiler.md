@@ -6,7 +6,7 @@ excerpt_separator: <!--more-->
 
 # ETW Profiler
 
-EtwProfiler is the new diagnoser for BenchmarkDotNet that I have just finished. It's going to be released as part of `0.11.2`. Soon! It allows to profile the benchmarked .NET code on Windows and exports the data to a trace file which can be opened with [PerfView](https://github.com/Microsoft/perfview) or [Windows Performance Analyzer](https://docs.microsoft.com/en-us/windows-hardware/test/wpt/windows-performance-analyzer).
+EtwProfiler is the new diagnoser for BenchmarkDotNet that I have just finished. It was released as part of `0.11.2`. It allows to profile the benchmarked .NET code on Windows and exports the data to a trace file which can be opened with [PerfView](https://github.com/Microsoft/perfview) or [Windows Performance Analyzer](https://docs.microsoft.com/en-us/windows-hardware/test/wpt/windows-performance-analyzer).
 
 **Again with a single config!**
 <!--more-->
@@ -106,9 +106,7 @@ What we have today comes with following limitations:
 
 ## How to use it?
 
-You need to install `BenchmarkDotNet.Diagnostics.Windows` package. The official `0.11.2` version should be released to nuget.org in October. If you can't wait and want to give it a try today you need to download `0.11.1.784` preview package from our CI feed by adding following line `<add key="appveyor-bdn" value="https://ci.appveyor.com/nuget/benchmarkdotnet" />` to your `NuGet.config` file (if you don't have such file you can generate if by running `dotnet new nugetconfig` command). 
-
-It can be enabled in few ways, some of them:
+You need to install latest `BenchmarkDotNet.Diagnostics.Windows` package. It can be enabled in few ways, some of them:
 
 * Use the new attribute (apply it on a class that contains Benchmarks):
 
@@ -133,15 +131,13 @@ class Program
 
 * Passing `-p ETW` or `--profiler ETW` command line argument to `BenchmarkSwitcher`
 
-**Note:** If you want to use the console line argument, but you don't consume the `EtwProfiler` or any other public types from `BenchmarkDotNet.Diagnostics.Windows` package and you are using `dotnet run` instead of `dotnet publish` then you also need to apply `<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>` in your project file. This is required to make the dynamic assembly working. `dotnet run` won't copy `BenchmarkDotNet.Diagnostics.Windows.dll` to the output folder if you don't use any of it's types.
-
-
 ## Configuration
 
 To configure the new diagnoser you need to create an instance of `EtwProfilerConfig` class and pass it to the `EtwProfiler` constructor. The parameters that `EtwProfilerConfig` ctor takes are:
 
 * `performExtraBenchmarksRun` - if set to true, benchmarks will be executed one more time with the profiler attached. If set to false, there will be no extra run but the results will contain overhead. True by default.
 * `bufferSizeInMb` - ETW session buffer size, in MB. 256 by default.
+* `cpuSampleIntervalInMiliseconds` - the rate at which CPU samples are collected. By default this is 1 (once a millisecond per CPU). There is a lower bound on this (typically 0.125 ms).
 * `intervalSelectors` - interval per harwdare counter, if not provided then default values will be used.
 * `kernelKeywords` - kernel session keywords, ImageLoad (for native stack frames) and Profile (for CPU Stacks) are the defaults.
 * `providers` - providers that should be enabled, if not provided then default values will be used.
