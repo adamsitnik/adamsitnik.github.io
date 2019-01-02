@@ -422,12 +422,13 @@ Job=RyuJitX64  Jit=RyuJit  Platform=X64
  |  ReferenceType | **2.212 ns** | 0.0096 ns | 0.0081 ns |   **0.40** |      - |       0 B |
 
 </div>
+
  By applying this simple trick we were able to not only avoid boxing but also outperform reference type interface method invocation! It was possible due to the optimization performed by JIT. I am going to call it method de-virtualization because I don't have a better name for it. How does it work? Let's consider following example:
  
  **Note:** Previous version of this blog post had a bug, which was spotted by Fons Sonnemans. There is no need for extra `struct` constraint to avoid boxing. Thank you Fons!
  
- ```cs
- public void Method<T>(T instance)
+```cs
+public void Method<T>(T instance)
         where T : IDisposable
 {
         instance.Dispose();
@@ -436,7 +437,7 @@ Job=RyuJitX64  Jit=RyuJit  Platform=X64
  
  When the `T` is constrained with `where T : INameOfTheInterface`, the C# compiler emits additional `IL` instruction called `constrained` ([Docs](https://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.constrained.aspx)).
  
- ```cs
+```cs
  .method public hidebysig 
     instance void Method<([mscorlib]System.IDisposable) T> (
         !!T 'instance'
@@ -491,6 +492,7 @@ Frequency=2338348 Hz, Resolution=427.6523 ns, Timer=TSC
  |  ValueTypeSmart |    RyuJitX64 |    RyuJit |      X64 | 0.0004 ns | 0.0006 ns | 0.0005 ns |
 
 </div>
+
 **Note:** If you would like to play with generated IL code you can use the awesome [SharpLab](https://sharplab.io/#v2:C4LglgNgNAJiDUAfAAgBgATIIwG4CwAUMgMyYBM6AwugN6HoOanIAs6AsgKbAAWA9jAA8AFQB8ACmHowAOwDOwAIYyAxpwCU9RtoDuPTgCdO6KSHQKDAVxXAo6AJIARMHIAOfOYoBGETloZ0BNrBjLIKymoAdM5uHpzi6vhBjAC+hClAA===).
 
 ## Copying
@@ -578,12 +580,13 @@ Runtime=Clr
  |     TestValueType3Fields |    RyuJit |      X64 | 2.627 ns |
 
 </div>
+
  The bigger the Value Type is, the more expensive copying is. 
  Have you noticed that `TestValueType3Fields` was faster than `TestValueType2Fields` for `RyuJit`? To answer the question why we would need to analyse the generated native assembly code.
 
  
- **How can we avoid copying big Value Types? We should pass and return them by Reference!
- I am going to leave it here, and continue with my `ref returns and locals` blog post next week.**
+ **How can we avoid copying big Value Types? We should pass and return them by Reference!**
+ I am going to leave it here, and continue with my [ref returns and locals](https://adamsitnik.com/ref-returns-and-ref-locals/) blog post next week.
 
 ## Summary
 
