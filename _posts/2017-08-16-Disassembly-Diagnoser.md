@@ -6,7 +6,7 @@ excerpt_separator: <!--more-->
 
 # Disassembly Diagnoser
 
-Disassembly Diagnoser is the new diagnoser for BenchmarkDotNet that I have just finished. It's was released as part of `0.10.10`. It allows to disassemble the benchmarked .NET code:
+Disassembly Diagnoser is the new diagnoser for BenchmarkDotNet that I have just finished. It was released as part of `0.10.10`. It allows to disassemble the benchmarked .NET code:
 
 * to ASM:
 	* desktop .NET: LegacyJit (32 & 64 bit), RyuJIT (64 bit)
