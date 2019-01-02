@@ -7,8 +7,12 @@ permalink: /speaking/
 {: .center}
 ![Me speaking](/images/mespeaking.jpg)
 
+* Spanification
+	- Update Conference, Prague, Czech Republic (23.11.2018) ([slides](https://adamsitnik.com/files/Spanification_Prague.pdf), [website](https://www.updateconference.net/en/session/spanification))
 * Powerful benchmarking with BenchmarkDotNet
-	- TBA
+	- Update Conference, Prague, Czech Republic (23.11.2018) ([slides](https://adamsitnik.com/files/Powerful_Prague.pdf), [website](https://www.updateconference.net/en/session/powerful-benchmarking-in--net))
+	- Dotnetos Conference, Warsaw, Poland (05.11.2018) ([slides](https://adamsitnik.com/files/PowerfullBenchmarking_Dotnetos.pdf), [website](https://dotnetos.org/))
+	- GET.NET Conference, Gdańsk, Poland (27.10.2018) ([slides](https://adamsitnik.com/files/PowerfullBenchmarking_Gdansk.pdf), [website](https://konferencjaget.net/en/gdansk/schedule#230))
 * .NET Core: Performance Revolution
 	- .NET TechTalks MeetUp, Prague, Czech Republic (19.07.2017) ([slides](https://adamsitnik.com/files/Prague.pdf), [event](https://www.wug.cz/praha/akce/951--Net-TechTalks))
 * My awesome journey with Open Source ([slides](https://adamsitnik.com/files/MyAwesomeJourneyWithOpenSource.pdf))
