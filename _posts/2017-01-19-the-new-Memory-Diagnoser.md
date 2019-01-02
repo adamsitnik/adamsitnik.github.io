@@ -35,7 +35,7 @@ So at this point of time, I knew how to get an accurate number of allocated byte
 
 ## Can it be trusted now?
 
-Let's create a new console app, install [BenchmarkDotNet 0.10.1](https://www.nuget.org/packages/BenchmarkDotNet/0.10.1), run following code and analyse the results.
+Let's create a new console app, install latest [BenchmarkDotNet](https://www.nuget.org/packages/BenchmarkDotNet), run following code and analyse the results.
 
 ```cs
 class Program
@@ -46,6 +46,7 @@ class Program
     }
 }
 
+[MemoryDiagnoser] // we need to enable it in explicit way
 [RyuJitX64Job, LegacyJitX86Job] // let's run the benchmarks for 32 & 64 bit
 public class Benchmarks
 {
@@ -92,7 +93,7 @@ Visual Studio Memory Allocation Profiler shows `354 000 064` for `1 000 000` of 
 
 ## How to use it?
 
-Now it's part of our core package, so you don't need to install any extra dependencies. ~~It's also enabled by default in the DefaultConfig.~~ Since `0.10.3` it's not enabled by default. You can turn it on in two ways:
+Now it's part of our core package, so you don't need to install any extra dependencies. It's not enabled by default. You can turn it on in three ways:
 
 * Use the new attribute (apply it on a class that contains Benchmarks):
 
@@ -113,7 +114,7 @@ private class CustomConfig : ManualConfig
 }
 ```
 
-**Note**: To get the cross-platform MemoryDiagnoser you need to update to **netcoreapp11** where the `GC.GetAllocatedBytesForCurrentThread()` got exposed.
+* Passing `-m` or `--memory` command line argument to `BenchmarkSwitcher`
 
 ## How to read the results
 
@@ -130,7 +131,7 @@ private class CustomConfig : ManualConfig
 
 When reading the results please keep in mind that:
 
-* 1 kB = 1 000 bytes. Not 1024. I decided to follow the [Wikipedia](https://en.wikipedia.org/wiki/Kilobyte), not my personal preferences.
+* 1 kB = 1 024 bytes. Not 1000.
 * Every reference type instance has two extra fields: object header and method table pointer. That's why the results always include 2x pointer size for every object allocation. For more detailed info about extra overhead please read this great blog post [How does Object.GetType() really work?](https://tooslowexception.com/how-does-gettype-work/) by Konrad Kokosa.
 * CLR does some aligning. If you try to allocate `new byte[7]` array, it will allocate `byte[8]` array.
 
