@@ -203,8 +203,8 @@ I wanted to thank [Wojciech Nagórski](https://wojciechnagorski.com/) who has fi
 
 ## Summary
 
-Concurrency Visualizer is very powerfull tool that can visualize concurrent code in user-friendly way. It's a plugin for Visual Studion which can be downloaded for free from [Visual Studio Market Place](https://marketplace.visualstudio.com/items?itemName=Diagnostics.ConcurrencyVisualizer2017).
+Concurrency Visualizer is very powerfull tool that can visualize concurrent code in user-friendly way. It's a plugin for Visual Studio which can be downloaded for free from [Visual Studio Market Place](https://marketplace.visualstudio.com/items?itemName=Diagnostics.ConcurrencyVisualizer2017).
 
-I really encourage you to read the [docs](https://docs.microsoft.com/en-us/visualstudio/profiling/concurrency-visualizer) and watched some [Channel 9 videos](https://channel9.msdn.com/Search?term=Concurrency%20Visualizer) and give it a try.
+I really encourage you to read the [docs](https://docs.microsoft.com/en-us/visualstudio/profiling/concurrency-visualizer) and watch some [Channel 9 videos](https://channel9.msdn.com/Search?term=Concurrency%20Visualizer) and give it a try.
 
 With the new BenchmarkDotNet feature you can get the trace file by running a single command from the console!
