@@ -171,4 +171,4 @@ After installing Concurrency Visualizer from [Visual Studio Market Place](https:
 
 ### Special Thanks
 
-I wanted to thank [Wojciech Nagórski](https://wojciechnagorski.com/) who has fixed two bugs ([#962](https://github.com/dotnet/BenchmarkDotNet/pull/962), [#958](https://github.com/dotnet/BenchmarkDotNet/pull/958)) that previously required all `BenchmarkDotNet.Diagnostics.Windows` users to use some weird workarounds to get it working. Thanks to Wojciech all you need to do is to install the package!
+I wanted to thank [Wojciech NagÃ³rski](https://wojciechnagorski.com/) who has fixed two bugs ([#962](https://github.com/dotnet/BenchmarkDotNet/pull/962), [#958](https://github.com/dotnet/BenchmarkDotNet/pull/958)) that previously required all `BenchmarkDotNet.Diagnostics.Windows` users to use some weird workarounds to get it working. Thanks to Wojciech all you need to do is to install the package!
