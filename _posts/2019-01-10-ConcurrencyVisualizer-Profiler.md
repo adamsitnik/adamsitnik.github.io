@@ -169,6 +169,42 @@ After installing Concurrency Visualizer from [Visual Studio Market Place](https:
 {: .center}
 ![Open Trace In Visual Studio](/images/cvprofiler/open_trace.png)
 
+## Sample usages
+
+### CPU Utilization
+
+Using the new diagnoser to find out what is the CPU utilization for `BinaryTrees_5` benchmark in the [dotnet/performance](https://github.com/dotnet/performance/blob/master/src/benchmarks/micro/coreclr/BenchmarksGame/binarytrees-5.cs) repository.
+
+```cmd
+dotnet run -c Release -f netcoreapp2.1 --filter *BinaryTrees_5* --profiler CV
+```
+
+{: .center}
+![Binary Trees 5](/images/cvprofiler/binary_trees_5.png)
+
+Note: As you can see, we are using 2 - 2.5 CPUs out of twelve!
+
+### Synchronization
+
+Using the new diagnoser to find out what % of time is spent for synchronization for `SpectralNorm_3` benchmark in the [dotnet/performance](https://github.com/dotnet/performance/blob/master/src/benchmarks/micro/coreclr/BenchmarksGame/spectralnorm-3.cs) repository.
+
+```cmd
+dotnet run -c Release -f netcoreapp2.1 --filter *spectralnorm_3* --profiler CV
+```
+
+{: .center}
+![Spectral Norm 3](/images/cvprofiler/spectral_norm_3.png)
+
+Note: 90% of the time is spent for synchronization.
+
 ### Special Thanks
 
 I wanted to thank [Wojciech Nagórski](https://wojciechnagorski.com/) who has fixed two bugs ([#962](https://github.com/dotnet/BenchmarkDotNet/pull/962), [#958](https://github.com/dotnet/BenchmarkDotNet/pull/958)) that previously required all `BenchmarkDotNet.Diagnostics.Windows` users to use some weird workarounds to get it working. Thanks to Wojciech all you need to do is to install the package!
+
+## Summary
+
+Concurrency Visualizer is very powerfull tool that can visualize concurrent code in user-friendly way. It's a plugin for Visual Studion which can be downloaded for free from [Visual Studio Market Place](https://marketplace.visualstudio.com/items?itemName=Diagnostics.ConcurrencyVisualizer2017).
+
+I really encourage you to read the [docs](https://docs.microsoft.com/en-us/visualstudio/profiling/concurrency-visualizer) and watched some [Channel 9 videos](https://channel9.msdn.com/Search?term=Concurrency%20Visualizer) and give it a try.
+
+With the new BenchmarkDotNet feature you can get the trace file by running a single command from the console!
