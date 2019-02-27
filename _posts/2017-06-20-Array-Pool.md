@@ -87,9 +87,9 @@ Array.Copy(
 
 Once you are done using it, you just `Return` it to the **SAME** pool. `Return` method has an overload, which allows you to cleanup the buffer so subsequent consumer via `Rent` will not see the previous consumer's content. By default the contents are left unchanged.
 
-**Very imporant note from ArrayPool [code](https://github.com/dotnet/corefx/blob/master/src/System.Buffers/src/System/Buffers/ArrayPool.cs#L110)**: 
+**Very imporant note from ArrayPool [code](https://github.com/dotnet/coreclr/blob/39f9e894aa16113c2c0dda1e99ce5dd606bd45a6/src/System.Private.CoreLib/shared/System/Buffers/ArrayPool.cs#L94-L96)**: 
 
-> Once a buffer has been returned to the pool, the caller gives up all ownership of the buffer. The reference returned from a given call to Rent must be returned via Return only once.
+> Once a buffer has been returned to the pool, the caller gives up all ownership of the buffer and must not use it. The reference returned from a given call to Rent must only be returned via Return once.
 
 It means, that the developer is responsible for doing things right. If you keep using the reference to the buffer after returning it to the pool, you are risking unexpected behavior. As far as I know, there is no static code analysis tool that can verify the correct usage (as of today). ArrayPool is part of the `corefx` library, it's not a part of the `C#` language.
 
