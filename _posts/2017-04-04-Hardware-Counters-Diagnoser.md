@@ -88,16 +88,16 @@ Let's use our new diagnoser to answer the famous *"[Why is it faster to process 
 ```cs
 class Program
 {
-    static void Main(string[] args) => BenchmarkRunner.Run<Cpu_BranchPerdictor>();
+    static void Main(string[] args) => BenchmarkRunner.Run<Cpu_BranchPredictor>();
 }
 
 [HardwareCounters(HardwareCounter.BranchMispredictions, HardwareCounter.BranchInstructions)]
-public class Cpu_BranchPerdictor
+public class Cpu_BranchPredictor
 {
     private const int N = 32767;
     private readonly int[] sorted, unsorted;
 
-    public Cpu_BranchPerdictor()
+    public Cpu_BranchPredictor()
     {
         var random = new Random(0);
         unsorted = new int[N];
