@@ -126,6 +126,7 @@ private class CustomConfig : ManualConfig
 * Allocated contains the size of allocated **managed** memory. **Stackalloc/native heap allocations are not included.** It's per single invocation, **inclusive**.
 * The `Gen X` column contains the number of `Gen X` collections per ***1 000*** Operations. If the value is equal 1, then it means that GC collects memory once per one thousand of benchmark invocations in generation `X`. BenchmarkDotNet is using some heuristic when running benchmarks, so the number of invocations can be different for different runs. Scaling makes the results comparable.
 * `-` in the Gen column means that no garbage collection was performed.
+* `-` in the Allocated column means that no managed memory was allocated. Depending on the version of BenchmarkDotNet you are using, it might be represented with `-` or `0 B`.
 * If `Gen X` column is not present, then it means that no garbage collection was performed for generation `X`. If none of your benchmarks induces the GC, the Gen columns are not present.
 
 
