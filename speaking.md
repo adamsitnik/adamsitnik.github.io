@@ -7,6 +7,8 @@ permalink: /speaking/
 {: .center}
 ![Me speaking](/images/mespeaking.jpg)
 
+* Solving .NET performance issues
+	- Update Conference, Prague, Czech Republic (15.11.2019) ([video](https://www.youtube.com/watch?v=HDbtwTsar1Q), [website](https://www.updateconference.net/en/2019/session/solving--net-performance-issues))
 * Spanification
 	- .NET Core Summer Event, Veenendaal, Netherlands (22.06.2019) ([slides](https://adamsitnik.com/files/Spanification_NL.pdf), [website](https://www.dncse.nl/sessions/session1-2/))
 	- Update Conference, Prague, Czech Republic (23.11.2018) ([slides](https://adamsitnik.com/files/Spanification_Prague.pdf), [website](https://www.updateconference.net/en/session/spanification))
@@ -17,6 +19,7 @@ permalink: /speaking/
 * .NET Core: Performance Revolution
 	- .NET TechTalks MeetUp, Prague, Czech Republic (19.07.2017) ([slides](https://adamsitnik.com/files/Prague.pdf), [event](https://www.wug.cz/praha/akce/951--Net-TechTalks))
 * My awesome journey with Open Source ([slides](https://adamsitnik.com/files/MyAwesomeJourneyWithOpenSource.pdf))
+	- Update Conference, Prague, Czech Republic (14.11.2019) ([video](https://www.youtube.com/watch?v=kC1Jc5lhSO8), [website](https://www.updateconference.net/en/2019/session/my-awesome-journey-with-open-source))
 	- .NET Core Summer Event, Veenendaal, Netherlands (22.06.2019) ([slides](https://adamsitnik.com/files/MyAwesomeJourneyWithOpenSource_NL.pdf), [website](https://www.dncse.nl/sessions/session1-2/))
 	- Programistok Conference, Białystok, Poland (07.10.2017) ([slides](https://adamsitnik.com/files/Programistok.pdf), [website](https://programistok.org/#agenda))
 	- Norwegian IT Night 3city Conference, Sopot, Poland (04.10.2017) ([slides](https://adamsitnik.com/files/NorwegianITNight.pdf), [website](https://norwegian-it-night-tricity.confetti.events/))
