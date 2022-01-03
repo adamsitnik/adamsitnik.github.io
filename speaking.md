@@ -7,6 +7,8 @@ permalink: /speaking/
 {: .center}
 ![Me speaking](/images/mespeaking.jpg)
 
+* Running .NET Core performance investigation on Linux
+	- DotNext conference, St. Petersburg, Russia (15.06.2020) ([video](https://www.youtube.com/watch?v=y4-h3qyDpJo), [slides](https://adamsitnik.com/files/PerformanceInvestigation_On_Linux_2020.pdf), [website](https://2020.dotnext-piter.ru/en/2020/spb/talks/71fqetkioiurtihmg7pt1y/))
 * Solving .NET performance issues
 	- Update Conference, Prague, Czech Republic (15.11.2019) ([video](https://www.youtube.com/watch?v=HDbtwTsar1Q), [slides](https://adamsitnik.com/files/PerformanceInvestigation2019.pdf), [website](https://www.updateconference.net/en/2019/session/solving--net-performance-issues))
     - Dotnetos Conference, Warsaw, Poland (10.10.2019) ([video](https://www.youtube.com/watch?v=y4HV5m5GR7o), [slides](https://adamsitnik.com/files/PerformanceInvestigation2019.pdf), [website](https://conf.dotnetos.org/2019/index.html))
