@@ -8,7 +8,8 @@ permalink: /speaking/
 ![Me speaking](/images/mespeaking.jpg)
 
 * Solving .NET performance issues
-	- Update Conference, Prague, Czech Republic (15.11.2019) ([video](https://www.youtube.com/watch?v=HDbtwTsar1Q), [website](https://www.updateconference.net/en/2019/session/solving--net-performance-issues))
+	- Update Conference, Prague, Czech Republic (15.11.2019) ([video](https://www.youtube.com/watch?v=HDbtwTsar1Q), [slides](https://adamsitnik.com/files/PerformanceInvestigation2019.pdf), [website](https://www.updateconference.net/en/2019/session/solving--net-performance-issues))
+    - Dotnetos Conference, Warsaw, Poland (10.10.2019) ([video](https://www.youtube.com/watch?v=y4HV5m5GR7o), [slides](https://adamsitnik.com/files/PerformanceInvestigation2019.pdf), [website](https://conf.dotnetos.org/2019/index.html))
 * Spanification
 	- .NET Core Summer Event, Veenendaal, Netherlands (22.06.2019) ([slides](https://adamsitnik.com/files/Spanification_NL.pdf), [website](https://www.dncse.nl/sessions/session1-2/))
 	- Update Conference, Prague, Czech Republic (23.11.2018) ([slides](https://adamsitnik.com/files/Spanification_Prague.pdf), [website](https://www.updateconference.net/en/session/spanification))
