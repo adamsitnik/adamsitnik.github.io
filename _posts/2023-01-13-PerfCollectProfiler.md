@@ -38,34 +38,39 @@ namespace BenchmarkDotNet.Samples
 The command:
 
 ```cmd
+sudo dotnet run -c Release -f net7.0 --filter '*PerfCollectProfiler*' --profiler perf --job short
 ```
 
 The regular output:
 
 ```
-BenchmarkDotNet=v0.11.1.755-nightly, OS=Windows 10.0.17134.285 (1803/April2018Update/Redstone4)
+BenchmarkDotNet=v0.13.3.20230113-develop, OS=ubuntu 18.04
 Intel Xeon CPU E5-1650 v4 3.60GHz, 1 CPU, 12 logical and 6 physical cores
-Frequency=3507505 Hz, Resolution=285.1029 ns, Timer=TSC
-.NET Core SDK=2.2.100-preview2-009404
-  [Host] : .NET Core 2.1.4 (CoreCLR 4.6.26814.03, CoreFX 4.6.26814.02), 64bit RyuJIT
-  Dry    : .NET Core 2.1.4 (CoreCLR 4.6.26814.03, CoreFX 4.6.26814.02), 64bit RyuJIT
+.NET SDK=7.0.101
+  [Host] : .NET 7.0.1 (7.0.122.56804), X64 RyuJIT AVX2
+  Dry    : .NET 7.0.1 (7.0.122.56804), X64 RyuJIT AVX2
 
-// * Diagnostic Output - EtwProfiler *
+Job=ShortRun  IterationCount=3  LaunchCount=1  
+WarmupCount=3  
+
+
+// * Diagnostic Output - PerfCollectProfiler *
 Exported 1 trace file(s). Example:
-"C:\Projects\machinelearning\test\Microsoft.ML.Benchmarks\BenchmarkDotNet.Artifacts\Microsoft\ML\Benchmarks\RankingTrain\FastTree.etl"
+/home/adam/projects/BenchmarkDotNet/samples/BenchmarkDotNet.Samples/BenchmarkDotNet.Artifacts/BenchmarkDotNet.Samples.IntroPerfCollectProfiler.WriteAllText-20230113-180354.trace.zip
 ```
+
 <div class="scrollable-table-wrapper" markdown="block">
 
- |   Method |    Mean |    Error |   StdDev |
- |--------- |--------:|---------:|---------:|
- | FastTree | 32.48 s |  1.347 s | 0.0761 s |
+|       Method |     Mean |    Error |   StdDev |
+|------------- |---------:|---------:|---------:|
+| WriteAllText | 96.83 us | 51.98 us | 2.849 us |
 
 </div>
 
 And the new trace file opened with speedscope:
 
 {: .center}
-![speedscope](/images/perfcollectprofiler/speedscope.png)
+![speedscope](/images/perfcollectprofiler/arm64.png)
 
 ## The Story
 
@@ -87,6 +92,30 @@ I got back to working on it in 2020, but again with no success. In September 202
 Before the process with benchmarked code is started, the plugin searches for perfcollect file stored in artifacts folder. If it's not present it means that the tool has not been installed yet. In such case, it loads the script file from library resources (the script is embeded in the `.dll` to ensure we are using a version that we tested), stores it one the disk, makes it an executable and invokes the install command (with `-force` option to avoid the need of user input for confirmation).
 
 The next thing it does is identifying .NET SDK folder path and searching for missing native symbol files (`.so.dbg`). When some symbols are missing, it installs `dotnet symbol` tool in a dedicated folder (to always use latest version and avoid issues with broken existing configs) and commands it to recursively download symbols for all native libraries present in the SDK folder.
+
+Sample log output:
+
+```log
+// start dotnet tool install dotnet-symbol --tool-path "/tmp/BenchmarkDotNet/symbols" in 
+You can invoke the tool using the following command: dotnet-symbol
+Tool 'dotnet-symbol' (version '1.0.406001') was successfully installed.
+// command took 2.36s and exited with 0
+// start /tmp/BenchmarkDotNet/symbols/dotnet-symbol --recurse-subdirectories --symbols "/usr/share/dotnet/dotnet" "/usr/share/dotnet/lib*.so" in 
+Downloading from https://msdl.microsoft.com/download/symbols/
+/usr/share/dotnet/dotnet.dbg already exists, file not written
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libSystem.Globalization.Native.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libcoreclrtraceptprovider.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libSystem.Security.Cryptography.Native.OpenSsl.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libmscordaccore.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libSystem.IO.Compression.Native.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libSystem.Net.Security.Native.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libcoreclr.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libSystem.Native.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libclrjit.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libmscordbi.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libhostpolicy.so.dbg
+Writing: /usr/share/dotnet/shared/Microsoft.NETCore.App/7.0.1/libclrgc.so.dbg
+```
 
 Once everything is in place, the diagnoser starts perfcollect process. perfcollect does all the heavy lifting (the creation of lttng sessions, perf tool usage etc). When BenchmarkDotNet starts the benchmarking process, it [sets all the necessary environment variables](https://github.com/dotnet/BenchmarkDotNet/blob/12bf220e11fddc8e65b066eb1f300b63bfde7e9b/src/BenchmarkDotNet/Extensions/ProcessExtensions.cs#L133-L142). By doing that, it ensures that **all** symbols will get solved and the trace file will be complete.
 
@@ -146,17 +175,26 @@ The default config should be fine for 99% of users ;)
 ## Analyzing the trace files
 
 There are multiple ways to work with the trace files produced by perfcollect:
-* You can unzip the trace file, take the file produced by perf utility and open it with any tool that supports perf file format.
 * You can copy them to Windows and open with [PerfView](https://learn.microsoft.com/en-us/shows/perfview-tutorial/).
-
-By default, BenchmarkDotNet performs Warmup, Pilot and Overhead phases before starting the actual benchmark workload. I recommend to just filter the trace file to actual workload.
-
-Here is how you can do it with speedscope:
+* You can unzip the trace file, take the file produced by perf utility and open it with any tool that supports perf file format.
 
 {: .center}
-![Nofilters](/images/etwprofiler/flamegraph_not_filtered.png)
+![tracefile](/images/perfcollectprofiler/tracefilezip.png)
 
-If you are not familiar with speedscope you can read my [old blog post](https://adamsitnik.com/speedscope/#demo) about it. But to be honest the tool is so intutive that you don't really need to prepare yourself for using it.
+If you are not familiar with speedscope you can read my [old blog post](https://adamsitnik.com/speedscope/#demo) about it. The tool is so intuitive that you don't really need to prepare yourself for using it.
+
+1. Unzip the trace file, go to [https://www.speedscope.app/](https://www.speedscope.app/), select Browse and choose the `perf.data.txt` file.
+2. perfcollect by default performs machine-wide profiling and speedscope shows only data from one thread at a time. So you need to select the thread from the thread list:
+
+{: .center}
+![tracefile](/images/perfcollectprofiler/choosethread.png)
+
+3. Now you can just choose on of the tabs, depending on what kind of visualization you prefer. In case you like flamegraphs you can go to "Left Heavy":
+
+{: .center}
+![LeftHeavy](/images/perfcollectprofiler/leftheavy.png.png)
+
+By default, BenchmarkDotNet performs Warmup, Pilot and Overhead phases before starting the actual benchmark workload. I recommend to just filter the trace file to actual workload.
 
 ### Special Thanks
 
@@ -164,3 +202,25 @@ I wanted to thank:
 
 * Brian Robbins for authoring perfcollect and providing ongoing help.
 * Jan Vorlicek for helping me with the investigation and unblocking me.
+
+## No blog posts for the last four years
+
+I have not posted anything on this blog for almost four years. I simply lost the motivation, and I am not comfortable to speak in public about the reasons behind it.
+
+But one of the things that makes me very happy is helping animals. Last year I've officially become a volunteer in a local animal shelter. My duties are mainly cleaning the cages, feeding the bunnies and driving them to/from the vet. But I am also helping the shelter financially.
+
+To optimize my impact, I wanted to kindly ask you for donation for the bunnies. You can do it online via [https://pomagam.pl/en/nowyrok-staredlugi](https://pomagam.pl/en/nowyrok-staredlugi) website. For translation from polish you can use [this](https://pomagam-pl.translate.goog/en/nowyrok-staredlugi?_x_tr_sl=pl&_x_tr_tl=en&_x_tr_hl=en-US&_x_tr_pto=wapp) google translate link.
+
+If you make a donation please leave a comment on the donation website, here on my blog, send me an email or tag me on Twitter. I am going to donate the same amount and respond back. To optimize even further I am going to fill the paper work and ask my current employer (Microsoft) to donate the same amout I've donated (yes, MS offers such a perk!). So for every dolar you donate, the shelter gets three dollars.
+
+I want to verify what is the best way I can help the shelter: cleaning bunnies cages or sharing my knowledge online and asking for donations.
+
+If you restore my faith in humanity I am going to blog again. Possible topics: 
+
+1. Cross platform and cross architecture disassembler.
+2. Startup time performance investigation based on System.CommandLine example.
+3. The story and reasoning behind improving Sockets performance on Linux in .NET 5.
+4. Best practices for Fast File IO with .NET.
+
+Thank you,
+Adam
