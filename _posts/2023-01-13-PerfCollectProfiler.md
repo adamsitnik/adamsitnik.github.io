@@ -192,9 +192,9 @@ If you are not familiar with speedscope you can read my [old blog post](https://
 3. Now you can just choose on of the tabs, depending on what kind of visualization you prefer. In case you like flamegraphs you can go to "Left Heavy":
 
 {: .center}
-![LeftHeavy](/images/perfcollectprofiler/leftheavy.png.png)
+![LeftHeavy](/images/perfcollectprofiler/leftheavy.png)
 
-By default, BenchmarkDotNet performs Warmup, Pilot and Overhead phases before starting the actual benchmark workload. I recommend to just filter the trace file to actual workload.
+By default, BenchmarkDotNet performs Warmup, Pilot and Overhead phases before starting the actual benchmark workload. Just filter the trace file to actual workload, unless you are interested is cold startup time.
 
 ### Special Thanks
 
@@ -205,22 +205,22 @@ I wanted to thank:
 
 ## No blog posts for the last four years
 
-I have not posted anything on this blog for almost four years. I simply lost the motivation, and I am not comfortable to speak in public about the reasons behind it.
+I have not posted anything on this blog for almost four years. I simply lost the motivation, and I am not comfortable speaking in public about the reasons behind it.
 
-But one of the things that makes me very happy is helping animals. Last year I've officially become a volunteer in a local animal shelter. My duties are mainly cleaning the cages, feeding the bunnies and driving them to/from the vet. But I am also helping the shelter financially.
+But one of the things that makes me very happy is helping animals. Last year I've officially become a volunteer in a local animal shelter. My duties are mainly cleaning the cages, feeding the bunnies, and driving them to/from the vet. But I am also helping the shelter financially.
 
-To optimize my impact, I wanted to kindly ask you for donation for the bunnies. You can do it online via [https://pomagam.pl/en/nowyrok-staredlugi](https://pomagam.pl/en/nowyrok-staredlugi) website. For translation from polish you can use [this](https://pomagam-pl.translate.goog/en/nowyrok-staredlugi?_x_tr_sl=pl&_x_tr_tl=en&_x_tr_hl=en-US&_x_tr_pto=wapp) google translate link.
+To optimize my impact, I wanted to kindly ask you for a donation for the bunnies. You can do it online via [https://pomagam.pl/en/nowyrok-staredlugi](https://pomagam.pl/en/nowyrok-staredlugi) website. For translation from polish you can use [this](https://pomagam-pl.translate.goog/en/nowyrok-staredlugi?_x_tr_sl=pl&_x_tr_tl=en&_x_tr_hl=en-US&_x_tr_pto=wapp) google translate link.
 
-If you make a donation please leave a comment on the donation website, here on my blog, send me an email or tag me on Twitter. I am going to donate the same amount and respond back. To optimize even further I am going to fill the paper work and ask my current employer (Microsoft) to donate the same amout I've donated (yes, MS offers such a perk!). So for every dolar you donate, the shelter gets three dollars.
+If you donate please leave a comment on the donation website, here on my blog, send me an email or tag me on Twitter. I am going to donate the same amount and respond back. To optimize even further I am going to fill in the paperwork and ask my current employer (Microsoft) to donate the same amount I've donated (yes, MS offers such a perk!). So, for every dollar you donate, the shelter gets three dollars.
 
 I want to verify what is the best way I can help the shelter: cleaning bunnies cages or sharing my knowledge online and asking for donations.
 
 If you restore my faith in humanity I am going to blog again. Possible topics: 
 
-1. Cross platform and cross architecture disassembler.
-2. Startup time performance investigation based on System.CommandLine example.
-3. The story and reasoning behind improving Sockets performance on Linux in .NET 5.
-4. Best practices for Fast File IO with .NET.
+* Cross platform and cross architecture disassembler.
+* Startup time performance investigation based on System.CommandLine example.
+* The story and reasoning behind improving Sockets performance on Linux in .NET 5.
+* Best practices for Fast File IO with .NET.
 
 Thank you,
 Adam
