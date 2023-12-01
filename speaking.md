@@ -7,7 +7,14 @@ permalink: /speaking/
 {: .center}
 ![Me speaking](/images/mespeaking.jpg)
 
+* Building scalable cloud native apps with .NET 8
+	- Local .NET User Group, Gdańsk, Poland (30.11.2023) ([slides](https://adamsitnik.com/files/AspireNov2023.pdf), [website](https://www.meetup.com/pl-PL/tg-net/events/296843606/))
+* BenchmarkDotNet: State of the art
+	- Techorama Conference, Belgium (16.05.2023) ([slides](https://adamsitnik.com/files/BenchmarkDotNet-Techorama2023.pdf), [website](https://techorama.be/agenda/session/benchmarkdotnet-state-of-the-art/))
+*  TechEmpower wins in .NET 5: the full story
+	- Local .NET User Group, Gdańsk, Poland (09.02.2023) ([slides](https://adamsitnik.com/files/TechEmpower_Net5.pdf), [website](https://www.meetup.com/pl-PL/tg-net/events/290793322/))
 * Fast File IO with .NET 6
+	- Local .NET User Group, Gdańsk, Poland (15.09.2022) ([slides](https://adamsitnik.com/files/Fast_File_IO_with_DOTNET_6.pdf), [website](https://www.meetup.com/pl-PL/tg-net/events/287847007/))
 	- DotNext conference, Moscow, Russia (22.10.2021) ([slides](https://adamsitnik.com/files/Fast_File_IO_with_DOTNET_6.pdf), [website](https://dotnext-moscow.ru/en/talks/4k9xuwuvyzeqr0o8b3hycb/))
 * Running .NET Core performance investigation on Linux
 	- DotNext conference, St. Petersburg, Russia (15.06.2020) ([video](https://www.youtube.com/watch?v=y4-h3qyDpJo), [slides](https://adamsitnik.com/files/PerformanceInvestigation_On_Linux_2020.pdf), [website](https://2020.dotnext-piter.ru/en/2020/spb/talks/71fqetkioiurtihmg7pt1y/))
