@@ -7,7 +7,10 @@ permalink: /speaking/
 {: .center}
 ![Me speaking](/images/mespeaking.jpg)
 
+* BinaryFormatter removal: lessons learned
+	- Local .NET User Group, Gdańsk, Poland (09.01.2025) ([slides](https://adamsitnik.com/files/NRBF_Gdansk.pdf), [website](https://www.meetup.com/tg-net/events/305083976/))
 * Building scalable cloud native apps with .NET 8
+	- Local .NET User Group, Warsaw, Poland (18.01.2024) ([event](https://www.meetup.com/wg-net/events/298304365/), [video](https://www.youtube.com/watch?v=HLe4046wZbI))
 	- Local .NET User Group, Gdańsk, Poland (30.11.2023) ([slides](https://adamsitnik.com/files/AspireNov2023.pdf), [website](https://www.meetup.com/pl-PL/tg-net/events/296843606/))
 * BenchmarkDotNet: State of the art
 	- Techorama Conference, Belgium (16.05.2023) ([slides](https://adamsitnik.com/files/BenchmarkDotNet-Techorama2023.pdf), [website](https://techorama.be/agenda/session/benchmarkdotnet-state-of-the-art/))
